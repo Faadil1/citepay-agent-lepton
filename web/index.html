@@ -2,44 +2,272 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>CitePay Agent — Proof Viewer</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CitePay Agent — No pay, no cite</title>
 <style>
-  :root { --bg:#0b0d10; --panel:#14171c; --line:#262b33; --text:#e6e8eb; --muted:#8a929e; --accent:#5eead4; --reject:#4a3236; --select:#1f3d33; }
+  :root {
+    --bg: #0b0d10;
+    --panel: #14171c;
+    --panel-2: #191d24;
+    --border: #262b33;
+    --text: #e9ebee;
+    --muted: #8a929e;
+    --live: #5aa9ff;
+    --pass: #34d399;
+    --amber: #f2b84b;
+    --reject: #b6bcc3;
+    --reject-bg: #1c1e22;
+    --reject-border: #3a3f47;
+    --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+    --sans: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
   * { box-sizing: border-box; }
-  body { margin:0; background:var(--bg); color:var(--text); font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; padding: 32px; line-height:1.5; }
-  h1 { font-size: 18px; margin:0 0 4px; }
-  .sub { color: var(--muted); font-size: 13px; margin-bottom: 24px; }
-  .query { background: var(--panel); border:1px solid var(--line); padding:12px 16px; border-radius:6px; margin-bottom:24px; }
-  .cards { display:grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap:12px; margin-bottom:24px; }
-  .card { background: var(--panel); border:1px solid var(--line); border-radius:6px; padding:14px; font-size:13px; }
-  .card.selected { border-color: var(--accent); background: var(--select); }
-  .card.rejected { opacity:0.7; background: var(--reject); }
-  .card h3 { margin:0 0 6px; font-size:14px; }
-  .tag { display:inline-block; font-size:11px; padding:2px 6px; border-radius:4px; margin-top:6px; }
-  .tag.select { background: var(--accent); color:#00201b; }
-  .tag.reject { background:#8a4b52; color:#fff; }
-  .terms { color: var(--muted); font-size:11px; margin-top:4px; }
-  .section { margin-bottom: 24px; }
-  .section h2 { font-size:13px; color: var(--muted); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:8px; }
-  .kv { display:grid; grid-template-columns: 160px 1fr; gap:4px 12px; font-size:13px; background:var(--panel); border:1px solid var(--line); border-radius:6px; padding:12px 16px; }
-  .kv div:nth-child(odd) { color: var(--muted); }
-  .txref { color: var(--accent); word-break: break-all; }
-  .answer { background: var(--panel); border:1px solid var(--accent); border-radius:6px; padding:14px 16px; font-size:13px; }
-  .missing { color:#e08a8a; font-size:13px; padding:16px; border:1px dashed #e08a8a; border-radius:6px; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font-family: var(--sans); line-height: 1.5;
+  }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 0 24px; }
+  .section { padding: 56px 0; border-bottom: 1px solid var(--border); }
+  .section:last-of-type { border-bottom: none; }
+  .section h2 {
+    font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--muted); margin: 0 0 20px;
+  }
+
+  /* Hero */
+  .hero { padding: 64px 0 48px; }
+  .badges { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 28px; }
+  .badge {
+    font-family: var(--mono); font-size: 11px; padding: 5px 10px;
+    border-radius: 999px; border: 1px solid var(--border); color: var(--muted);
+    background: var(--panel);
+  }
+  .badge.live { color: var(--live); border-color: var(--live); }
+  .badge.pass { color: var(--pass); border-color: var(--pass); }
+  .badge.amber-badge { color: var(--amber); border-color: var(--amber); }
+  h1 {
+    font-size: clamp(36px, 6vw, 56px); margin: 0 0 16px; font-weight: 700;
+    letter-spacing: -0.02em; line-height: 1.05;
+  }
+  .subhead { font-size: 20px; color: var(--text); margin: 0 0 12px; font-weight: 500; }
+  .support { font-size: 15px; color: var(--muted); max-width: 640px; margin: 0 0 28px; }
+  .cta {
+    display: inline-block; background: var(--pass); color: #06231a;
+    font-weight: 600; font-size: 14px; padding: 12px 20px; border-radius: 12px;
+    text-decoration: none;
+  }
+  .cta:hover { opacity: 0.9; }
+
+  /* Problem */
+  .problem p {
+    font-size: 24px; font-weight: 500; max-width: 640px; margin: 0;
+    color: var(--text);
+  }
+
+  /* Flow */
+  .steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .steps li {
+    background: var(--panel); border: 1px solid var(--border); border-radius: 12px;
+    padding: 20px; font-size: 15px; font-weight: 500;
+  }
+  .step-num {
+    display: block; font-family: var(--mono); color: var(--muted);
+    font-size: 12px; margin-bottom: 8px;
+  }
+
+  /* Judge moment cards */
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+  .card {
+    border-radius: 12px; padding: 18px; border: 1px solid var(--border);
+    background: var(--panel);
+  }
+  .card.selected { border-color: var(--pass); background: var(--panel-2); }
+  .card.rejected { border-color: var(--reject-border); background: var(--reject-bg); color: var(--reject); }
+  .card h3 { margin: 0 0 10px; font-size: 15px; font-weight: 600; color: var(--text); }
+  .card.rejected h3 { color: var(--reject); }
+  .card .row { font-size: 13px; margin-bottom: 4px; color: var(--muted); }
+  .card .row b { color: var(--text); font-weight: 500; }
+  .card .terms { font-size: 12px; color: var(--muted); margin-top: 6px; }
+  .tag {
+    display: inline-block; font-family: var(--mono); font-size: 11px;
+    padding: 4px 8px; border-radius: 6px; margin-top: 10px; font-weight: 600;
+  }
+  .tag.select { background: rgba(52,211,153,0.15); color: var(--pass); }
+  .tag.reject { background: rgba(182,188,195,0.1); color: var(--reject); }
+  .tx { font-family: var(--mono); font-size: 12px; color: var(--live); word-break: break-all; margin-top: 8px; }
+
+  /* Candidate details table */
+  .detail-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .detail-table th, .detail-table td {
+    text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--border);
+  }
+  .detail-table th { color: var(--muted); font-weight: 500; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; }
+  .detail-table td.mono { font-family: var(--mono); }
+
+  /* Receipt cards */
+  .receipt-card {
+    background: var(--panel); border: 1px solid var(--border); border-radius: 12px;
+    padding: 28px; font-size: 15px;
+  }
+  .receipt-card.limitation { border-color: var(--amber); }
+  .receipt-badge {
+    display: inline-block; font-family: var(--mono); font-size: 12px; font-weight: 700;
+    padding: 5px 10px; border-radius: 6px; margin-bottom: 18px;
+  }
+  .receipt-badge.live { background: rgba(90,169,255,0.15); color: var(--live); }
+  .receipt-badge.amber { background: rgba(242,184,75,0.15); color: var(--amber); }
+  .kv { display: grid; grid-template-columns: 180px 1fr; gap: 10px 16px; }
+  .kv div:nth-child(odd) { color: var(--muted); font-size: 13px; }
+  .kv div:nth-child(even) { font-family: var(--mono); font-size: 15px; word-break: break-all; }
+  .limitation-note {
+    margin-top: 18px; padding-top: 18px; border-top: 1px solid var(--border);
+    font-size: 13px; color: var(--text); line-height: 1.6;
+  }
+
+  /* Final answer */
+  .answer-card {
+    background: var(--panel-2); border: 1px solid var(--pass); border-radius: 12px;
+    padding: 24px; font-size: 15px;
+  }
+  .answer-card p { margin: 0 0 12px; }
+  .answer-card .highlight { color: var(--pass); font-weight: 600; }
+  .answer-card .rule {
+    margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border);
+    font-family: var(--mono); font-size: 13px; color: var(--muted);
+  }
+
+  /* Sponsor / limitations lists */
+  .plain-list { list-style: none; margin: 0; padding: 0; }
+  .plain-list li {
+    padding: 14px 0; border-bottom: 1px solid var(--border); font-size: 14px;
+  }
+  .plain-list li:last-child { border-bottom: none; }
+  .plain-list b { color: var(--text); }
+  .limitations-list li { color: var(--text); }
+  .limitations-list li::before { content: "— "; color: var(--amber); }
+
+  /* Links */
+  .links { display: flex; gap: 12px; flex-wrap: wrap; padding-bottom: 64px; }
+  .link-btn {
+    font-size: 14px; font-weight: 600; padding: 12px 18px; border-radius: 10px;
+    border: 1px solid var(--border); color: var(--text); text-decoration: none;
+    background: var(--panel);
+  }
+  .link-btn:hover { border-color: var(--live); }
+
+  @media (max-width: 640px) {
+    .steps { grid-template-columns: 1fr; }
+    .kv { grid-template-columns: 1fr; }
+    .kv div:nth-child(odd) { padding-top: 6px; }
+    .detail-table { font-size: 12px; }
+    .detail-table th:nth-child(4), .detail-table td:nth-child(4) { display: none; }
+  }
 </style>
 </head>
 <body>
-<h1>CitePay Agent — Proof Viewer (V3)</h1>
-<div class="sub">Static, offline, no framework. Reads the embedded evidence JSON below — replace it with your real evidence-log-v3.json before publishing.</div>
 
-<div id="root"></div>
+<div class="wrap">
 
-<!--
-  REPLACE the contents of this script tag with the real evidence-log-v3.json
-  produced by `node harness-v3.mjs`. Do not fetch() a live endpoint — this
-  viewer only ever displays a captured evidence file (LIVE evidence, PRESEEDED display).
--->
-<script id="evidence-data" type="application/json">
+  <!-- 1. HERO -->
+  <header class="hero">
+    <div class="badges">
+      <span class="badge pass">LIVE_GATEWAY PASS</span>
+      <span class="badge">Arc Testnet</span>
+      <span class="badge">Circle Gateway x402</span>
+      <span class="badge live">0.001 USDC Paid</span>
+      <span class="badge live">HTTP 200 Unlock</span>
+      <span class="badge amber-badge">Seller-side receipt captured</span>
+    </div>
+    <h1>No pay, no cite.</h1>
+    <p class="subhead">CitePay Agent pays only the source it cites — proved live on Arc.</p>
+    <p class="support">It scores sources, rejects weak or expensive ones, settles a nanopayment through Circle Gateway on Arc Testnet, unlocks the selected source, and cites only what it paid for.</p>
+    <a class="cta" href="#judge-moment">View Proof ↓</a>
+  </header>
+
+  <!-- 2. PROBLEM TENSION -->
+  <section class="section problem">
+    <h2>Problem</h2>
+    <p>Every AI citation uses someone's work for free. CitePay makes citation cost something — and proves it.</p>
+  </section>
+
+  <!-- 3. THREE-STEP FLOW -->
+  <section class="section">
+    <h2>How it works</h2>
+    <ol class="steps">
+      <li><span class="step-num">1</span>Evaluate sources</li>
+      <li><span class="step-num">2</span>Pay selected source</li>
+      <li><span class="step-num">3</span>Cite only the paid source</li>
+    </ol>
+  </section>
+
+  <!-- 4. JUDGE MOMENT CARDS -->
+  <section class="section" id="judge-moment">
+    <h2>Judge moment</h2>
+    <div class="cards" id="judge-cards"></div>
+  </section>
+
+  <!-- 5. CANDIDATE DETAILS -->
+  <section class="section">
+    <h2>Candidate details</h2>
+    <table class="detail-table">
+      <thead>
+        <tr><th>Source</th><th>Price</th><th>Relevance / Ratio</th><th>Matched terms</th></tr>
+      </thead>
+      <tbody id="candidate-table-body"></tbody>
+    </table>
+  </section>
+
+  <!-- 6. PAYMENT RECEIPT -->
+  <section class="section">
+    <h2>Payment Receipt</h2>
+    <div class="receipt-card" id="payment-receipt"></div>
+  </section>
+
+  <!-- 7. SELLER-SIDE RECEIPT -->
+  <section class="section">
+    <h2>Seller-side Receipt</h2>
+    <div class="receipt-card limitation" id="seller-receipt"></div>
+  </section>
+
+  <!-- 8. FINAL ANSWER -->
+  <section class="section">
+    <h2>Final answer</h2>
+    <div class="answer-card" id="final-answer"></div>
+  </section>
+
+  <!-- 9. SPONSOR RELEVANCE -->
+  <section class="section">
+    <h2>Sponsor relevance</h2>
+    <ul class="plain-list">
+      <li><b>Circle Gateway</b> — x402 payment and settlement path</li>
+      <li><b>Arc Testnet</b> — settlement network</li>
+      <li><b>USDC</b> — stable nanopayment unit</li>
+    </ul>
+  </section>
+
+  <!-- 10. HONEST LIMITATIONS -->
+  <section class="section">
+    <h2>Honest limitations</h2>
+    <ul class="plain-list limitations-list">
+      <li>Testnet only</li>
+      <li>No mainnet claim</li>
+      <li>No browser-based live payment UI</li>
+      <li>Seller-side receipt is sanitized</li>
+      <li>No production reliability claim</li>
+    </ul>
+  </section>
+
+  <!-- 11. LINKS -->
+  <footer class="links">
+    <a class="link-btn" href="https://github.com/Faadil1/citepay-agent-lepton">View Repo</a>
+    <a class="link-btn" href="#">Watch Demo</a>
+  </footer>
+
+</div>
+
+<!-- Real embedded evidence subset from evidence/live-gateway-evidence-v3.json -->
+<script id="evidence-v3" type="application/json">
 {
   "timestamp": "2026-07-05T05:06:25.582Z",
   "payment_mode": "LIVE_GATEWAY",
@@ -48,216 +276,94 @@
   "query": "How can AI agents compensate creators for cited evidence?",
   "relevance_method": "jaccard_term_overlap_no_llm",
   "selected_source_id": "S1",
-  "rejected_source_ids": [
-    "S2",
-    "S3"
-  ],
-  "events": [
-    {
-      "event": "v3_scoring",
-      "query": "How can AI agents compensate creators for cited evidence?",
-      "queryTokens": [
-        "ai",
-        "agents",
-        "compensate",
-        "creators",
-        "cited",
-        "evidence"
-      ]
-    },
-    {
-      "event": "candidate_sources_considered",
-      "candidates": [
-        {
-          "id": "S1",
-          "url": "http://localhost:4021/source/S1",
-          "price": 0.001,
-          "title": "Creator Citation Nanopayments",
-          "content": "AI agents can use nanopayments to pay creators when their work is selected and cited as evidence.",
-          "sourceTokens": [
-            "creator",
-            "citation",
-            "nanopayments",
-            "ai",
-            "agents",
-            "use",
-            "pay",
-            "creators",
-            "work",
-            "selected",
-            "cited",
-            "as",
-            "evidence"
-          ],
-          "relevanceScore": 0.357,
-          "matchedTerms": [
-            "ai",
-            "agents",
-            "creators",
-            "cited",
-            "evidence"
-          ],
-          "ratio": 357.143,
-          "overBudget": false
-        },
-        {
-          "id": "S2",
-          "url": "http://localhost:4021/source/S2",
-          "price": 0.02,
-          "title": "Expensive General Payments Overview",
-          "content": "A broad overview of payments, less specific to creator citation use cases.",
-          "sourceTokens": [
-            "expensive",
-            "general",
-            "payments",
-            "overview",
-            "broad",
-            "less",
-            "specific",
-            "creator",
-            "citation",
-            "use",
-            "cases"
-          ],
-          "relevanceScore": 0,
-          "matchedTerms": [],
-          "ratio": 0,
-          "overBudget": true
-        },
-        {
-          "id": "S3",
-          "url": "http://localhost:4021/source/S3",
-          "price": 0.001,
-          "title": "Secondary Creator Monetization Note",
-          "content": "A secondary note about creator monetization, useful but less directly relevant.",
-          "sourceTokens": [
-            "secondary",
-            "creator",
-            "monetization",
-            "note",
-            "about",
-            "useful",
-            "but",
-            "less",
-            "directly",
-            "relevant"
-          ],
-          "relevanceScore": 0,
-          "matchedTerms": [],
-          "ratio": 0,
-          "overBudget": false
-        }
-      ]
-    },
-    {
-      "event": "source_selected",
-      "selected": {
-        "id": "S1",
-        "url": "http://localhost:4021/source/S1",
-        "price": 0.001,
-        "relevanceScore": 0.357,
-        "ratio": 357.143,
-        "matchedTerms": [
-          "ai",
-          "agents",
-          "creators",
-          "cited",
-          "evidence"
-        ]
-      }
-    },
-    {
-      "event": "source_rejected",
-      "rejected": [
-        {
-          "id": "S2",
-          "price": 0.02,
-          "relevanceScore": 0,
-          "ratio": 0,
-          "matchedTerms": [],
-          "reason": "over_budget"
-        },
-        {
-          "id": "S3",
-          "price": 0.001,
-          "relevanceScore": 0,
-          "ratio": 0,
-          "matchedTerms": [],
-          "reason": "lower_relevance_price_ratio"
-        }
-      ]
-    },
-    {
-      "event": "budget_before_after",
-      "before": 0.005,
-      "after": 0.004
-    }
-  ],
-  "payment_evidence": {
-    "amount": "0.001",
-    "transaction": "1310f944-6996-4c6a-a32f-c7c27efc4966",
-    "status": 200,
-    "source_id": "S1"
-  },
-  "final_answer": {
-    "text": "CitePay selected S1 because it had the strongest computed relevance/price ratio (357.143) for the query \"How can AI agents compensate creators for cited evidence?\". Citation: [S1]. Receipt: 1310f944-6996-4c6a-a32f-c7c27efc4966.",
-    "citations": [
-      "S1"
-    ]
-  }
+  "rejected_source_ids": ["S2", "S3"],
+  "candidates": [
+    { "id": "S1", "title": "Creator Citation Nanopayments", "price": 0.001, "relevanceScore": 0.357, "ratio": 357.143, "matchedTerms": ["ai","agents","creators","cited","evidence"], "overBudget": false },
+    { "id": "S2", "title": "Expensive General Payments Overview", "price": 0.02, "relevanceScore": 0, "ratio": 0, "matchedTerms": [], "overBudget": true, "reason": "over_budget" },
+    { "id": "S3", "title": "Secondary Creator Monetization Note", "price": 0.001, "relevanceScore": 0, "ratio": 0, "matchedTerms": [], "overBudget": false, "reason": "lower_relevance_price_ratio" }
+  ]
+}
+</script>
+
+<!-- Real embedded evidence from evidence/settlement-receiving-proof.json -->
+<script id="seller-receipt-data" type="application/json">
+{
+  "payment_mode": "LIVE_GATEWAY",
+  "network": "eip155:5042002",
+  "seller_address": "0x9252470F6237E16d087E0e39B121B3e770Ea1972",
+  "selected_source_id": "S1",
+  "tx_ref": "f1983b38-e27e-4126-8ed1-69e76927d25d",
+  "amount_paid_usdc": "0.001",
+  "verify_is_valid": true,
+  "settle_success": true,
+  "payer": "0x44062bfded95d441a540f01ff21c1f1b8c841eea",
+  "limitations": [
+    "This receipt does not claim a measured seller balance delta. It proves seller-side payTo, verification, settlement success, payer, amount, and tx/ref from real seller logs."
+  ]
 }
 </script>
 
 <script>
 function render() {
-  const root = document.getElementById('root');
-  const raw = document.getElementById('evidence-data').textContent;
-  let data;
-  try { data = JSON.parse(raw); } catch (e) {
-    root.innerHTML = '<div class="missing">Evidence JSON is invalid.</div>';
-    return;
-  }
-  if (data._placeholder) {
-    root.innerHTML = '<div class="missing">No real evidence loaded yet. Replace the #evidence-data script tag with evidence-log-v3.json.</div>';
-    return;
-  }
+  const v3 = JSON.parse(document.getElementById('evidence-v3').textContent);
+  const receipt = JSON.parse(document.getElementById('seller-receipt-data').textContent);
 
-  const considered = data.events.find(e => e.event === 'candidate_sources_considered').candidates;
-  const selectedId = data.selected_source_id;
-  const rejectedEvent = data.events.find(e => e.event === 'source_rejected').rejected;
-  const rejectedMap = Object.fromEntries(rejectedEvent.map(r => [r.id, r]));
-
-  let html = '';
-  html += `<div class="query"><strong>Query:</strong> ${data.query}</div>`;
-
-  html += '<div class="section"><h2>Candidate sources</h2><div class="cards">';
-  considered.forEach(c => {
-    const isSelected = c.id === selectedId;
-    const rej = rejectedMap[c.id];
-    html += `<div class="card ${isSelected ? 'selected' : 'rejected'}">
-      <h3>${c.id} — ${c.title || ''}</h3>
-      <div>price: ${c.price} USDC</div>
-      <div>computed relevance: ${c.relevanceScore}</div>
-      <div>ratio: ${c.ratio}</div>
-      <div class="terms">matched terms: ${(c.matchedTerms || []).join(', ') || '(none)'}</div>
+  // Judge moment cards
+  const judgeCards = document.getElementById('judge-cards');
+  judgeCards.innerHTML = v3.candidates.map(c => {
+    const isSelected = c.id === v3.selected_source_id;
+    return `<div class="card ${isSelected ? 'selected' : 'rejected'}">
+      <h3>${c.id} — ${c.title}</h3>
+      <div class="row"><b>${c.price} USDC</b></div>
+      <div class="row">relevance/price ratio: <b>${c.ratio}</b></div>
+      ${c.matchedTerms.length ? `<div class="terms">matched terms: ${c.matchedTerms.join(', ')}</div>` : ''}
       ${isSelected
-        ? '<span class="tag select">SELECTED — paid</span>'
-        : `<span class="tag reject">REJECTED — ${rej ? rej.reason : ''}</span>`}
+        ? `<span class="tag select">PAID + CITED</span><div class="tx">tx/ref: ${receipt.tx_ref}</div>`
+        : `<span class="tag reject">REJECTED — ${c.reason === 'over_budget' ? 'OVER BUDGET' : 'LOWER RELEVANCE/PRICE'}</span>`}
     </div>`;
-  });
-  html += '</div></div>';
+  }).join('');
 
-  html += `<div class="section"><h2>Live payment</h2><div class="kv">
-    <div>payment_mode</div><div>${data.payment_mode}</div>
-    <div>network</div><div>${data.network}</div>
-    <div>tx / ref</div><div class="txref">${data.payment_evidence.transaction}</div>
-    <div>amount</div><div>${data.payment_evidence.amount}</div>
-    <div>relevance method</div><div>${data.relevance_method}</div>
-  </div></div>`;
+  // Candidate details table
+  const tbody = document.getElementById('candidate-table-body');
+  tbody.innerHTML = v3.candidates.map(c => `
+    <tr>
+      <td>${c.id}</td>
+      <td class="mono">${c.price} USDC</td>
+      <td class="mono">${c.relevanceScore} / ${c.ratio}</td>
+      <td>${c.matchedTerms.join(', ') || '—'}</td>
+    </tr>
+  `).join('');
 
-  html += `<div class="section"><h2>Final answer</h2><div class="answer">${data.final_answer.text}</div></div>`;
+  // Payment receipt
+  document.getElementById('payment-receipt').innerHTML = `
+    <span class="receipt-badge live">LIVE</span>
+    <div class="kv">
+      <div>payment_mode</div><div>${receipt.payment_mode}</div>
+      <div>network</div><div>${receipt.network}</div>
+      <div>amount</div><div>${receipt.amount_paid_usdc} USDC</div>
+      <div>tx / ref</div><div>${receipt.tx_ref}</div>
+      <div>verify</div><div>${receipt.verify_is_valid}</div>
+      <div>settle</div><div>${receipt.settle_success}</div>
+      <div>unlock</div><div>HTTP 200</div>
+    </div>`;
 
-  root.innerHTML = html;
+  // Seller-side receipt
+  document.getElementById('seller-receipt').innerHTML = `
+    <span class="receipt-badge amber">PASS_WITH_HONEST_LIMITATION</span>
+    <div class="kv">
+      <div>seller / payTo</div><div>${receipt.seller_address}</div>
+      <div>payer</div><div>${receipt.payer}</div>
+      <div>amount</div><div>${receipt.amount_paid_usdc} USDC</div>
+      <div>tx / ref</div><div>${receipt.tx_ref}</div>
+    </div>
+    <div class="limitation-note">${receipt.limitations[0]}</div>`;
+
+  // Final answer
+  document.getElementById('final-answer').innerHTML = `
+    <p>CitePay selected S1 because it had the strongest computed relevance/price ratio (${v3.candidates[0].ratio}) for the query "${v3.query}".</p>
+    <p class="highlight">Citation: [S1] only.</p>
+    <p>Rejected sources cited: none.</p>
+    <div class="rule">No Gateway settlement → no unlock → no citation.</div>`;
 }
 render();
 </script>
