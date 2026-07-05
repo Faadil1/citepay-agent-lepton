@@ -1,0 +1,22 @@
+{
+  "timestamp": "2026-07-05T04:13:31.605Z",
+  "payment_mode": "LIVE_GATEWAY",
+  "source_selected": {
+    "id": "source-arc-nanopayments",
+    "reason": "Relevant source for creator citation nanopayments.",
+    "price_usdc": "0.001"
+  },
+  "payment_evidence": {
+    "data": {
+      "id": "source-arc-nanopayments",
+      "title": "Nanopayments for Creator Citations",
+      "author": "Demo Creator",
+      "content": "Nanopayments let AI agents pay creators each time their work is used as cited evidence."
+    },
+    "amount": "1000",
+    "formattedAmount": "0.001",
+    "transaction": "41ff2be2-66c4-4b55-acec-88069d1a1992",
+    "status": 200
+  },
+  "final_answer": "Nanopayments allow AI agents to pay creators when their work is used as cited evidence [source-arc-nanopayments]. Receipt: LIVE_GATEWAY."
+}
