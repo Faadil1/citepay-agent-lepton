@@ -1,0 +1,91 @@
+# CitePay Agent — Demo Presentation
+
+**Public proof viewer:** https://faadil1.github.io/citepay-agent-lepton/index.html
+
+---
+
+## What it is
+
+CitePay Agent is a terminal-based AI agent submitted to the Lepton Agents Hackathon.
+
+It does one thing: before an AI agent can cite a source, it must pay for it.
+
+Payment flows through Circle Gateway x402 on Arc Testnet. The agent scores candidates, rejects the weak ones, pays the winner on-chain, and cites only what it paid for.
+
+The proof viewer above is the **judge presentation layer** — a static page rendering the captured V3 evidence. It is not a production app.
+
+---
+
+## The gate
+
+Three candidate sources. One user query. Fixed budget: 0.005 USDC.
+
+| Source | Price | Relevance | Ratio | Decision |
+|---|---|---|---|---|
+| S1 — Creator Citation Nanopayments | 0.001 USDC | 0.357 | 357.143 | PAID · CITED |
+| S2 — Expensive General Payments Overview | 0.02 USDC | 0 | 0 | REJECTED — over budget |
+| S3 — Secondary Creator Monetization Note | 0.001 USDC | 0 | 0 | REJECTED — lower relevance/price |
+
+The agent computed relevance via token overlap between the query and each source's title/content metadata. No LLM call for ranking.
+
+---
+
+## Live settlement
+
+```
+payment_mode:   LIVE_GATEWAY
+network:        eip155:5042002  (Arc Testnet)
+amount:         0.001 USDC
+gateway:        Circle Gateway x402
+verify:         true
+settle:         true
+unlock:         HTTP 200
+```
+
+**Seller-side receipt:**
+```
+seller/payTo:   0x9252470F6237E16d087E0e39B121B3e770Ea1972
+payer:          0x44062bfded95d441a540f01ff21c1f1b8c841eea
+amount:         0.001 USDC
+tx/ref:         f1983b38-e27e-4126-8ed1-69e76927d25d
+```
+
+---
+
+## Honest limitations
+
+- Testnet only. No mainnet settlement claimed.
+- No seller balance delta was measured (method not exposed by BatchFacilitatorClient).
+- What is proven: payTo, payer, verify, settle, tx/ref — from real seller logs.
+- Single verified live run per version.
+
+---
+
+## File authority
+
+| Path | Role |
+|---|---|
+| `web/index.html` | Canonical source |
+| `docs/index.html` | GitHub Pages mirror — identical to web/ |
+| https://faadil1.github.io/citepay-agent-lepton/index.html | Published public proof viewer |
+
+---
+
+## Key evidence files
+
+| File | Contents |
+|---|---|
+| `evidence/live-gateway-evidence-v3.json` | Full V3 agent run: query, scoring, selection, rejection reasons |
+| `evidence/settlement-receiving-proof.json` | Seller-side settlement receipt |
+| `evidence/settlement-trace-v3.json` | Settlement trace: verify, settle, HTTP status, tx/ref |
+| `evidence/LIVE-GATEWAY-V3-RESULT.md` | Human-readable V3 result summary |
+
+---
+
+## Stack
+
+- Node.js agent (terminal-based)
+- Circle Gateway x402 via `@circle-fin/x402-batching`
+- Arc Testnet (eip155:5042002)
+- viem for EVM interaction
+- Static proof viewer: plain HTML/JS/CSS, no framework
