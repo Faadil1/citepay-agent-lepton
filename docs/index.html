@@ -204,6 +204,63 @@
   .plain-list b { color: var(--arc-blue); }
   .limitations-list li::before { content: "— "; color: var(--amber); }
 
+
+  /* ============ EVIDENCE BOUNDARIES / LIMITATIONS ============ */
+  .boundary-intro {
+    max-width: 720px;
+    color: var(--muted);
+    font-size: 15px;
+    margin: -8px 0 28px;
+  }
+  .boundary-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+  .boundary-card {
+    border: 1px solid var(--border);
+    background: rgba(255,255,255,0.018);
+    border-radius: 4px;
+    padding: 20px;
+  }
+  .boundary-card h3 {
+    margin: 10px 0 8px;
+    font-size: 16px;
+    color: var(--text);
+  }
+  .boundary-card p {
+    margin: 0;
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  .boundary-badge {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    border: 1px solid var(--border);
+    padding: 4px 8px;
+    border-radius: 3px;
+  }
+  .boundary-badge.amber {
+    color: var(--amber);
+    border-color: var(--amber);
+  }
+  .boundary-badge.live {
+    color: var(--gate-open);
+    border-color: var(--gate-open);
+  }
+  .boundary-warning {
+    border-color: rgba(242,184,75,0.55);
+    background: rgba(242,184,75,0.035);
+  }
+  .boundary-final {
+    border-color: rgba(201,255,61,0.45);
+    background: rgba(201,255,61,0.035);
+  }
+
   /* ============ LINKS ============ */
   .links { display: flex; gap: 12px; flex-wrap: wrap; padding-bottom: 72px; }
   .link-btn {
@@ -222,6 +279,7 @@
     .ledger-row { grid-template-columns: 1fr 1fr; row-gap: 4px; }
     .ledger-row .debit, .ledger-row .credit, .ledger-row .balance { text-align: left; }
     .notary-seal { float: none; margin: 0 0 16px; }
+    .boundary-grid { grid-template-columns: 1fr; }
   }
 </style>
 </head>
@@ -330,15 +388,45 @@
 
   <!-- 11. HONEST LIMITATIONS -->
   <section>
-    <h2 class="section-title">Honest limitations</h2>
-    <ul class="plain-list limitations-list">
-      <li>Testnet only</li>
-      <li>No mainnet claim</li>
-      <li>No browser-based live payment UI</li>
-      <li>Seller-side receipt is sanitized</li>
-      <li>No production reliability claim</li>
-    </ul>
+    <h2 class="section-title">What this proves — and what it does not claim</h2>
+    <p class="boundary-intro">
+      CitePay is intentionally strict about evidence labels. LIVE means live testnet settlement.
+      Anything not directly proven is stated as a limitation, and the repo now includes an automated boundary check.
+    </p>
+
+    <div class="boundary-grid">
+      <article class="boundary-card">
+        <span class="boundary-badge">SCOPE</span>
+        <h3>Testnet only</h3>
+        <p>This demo proves live settlement on Arc Testnet. It does not claim mainnet settlement.</p>
+      </article>
+
+      <article class="boundary-card">
+        <span class="boundary-badge">SAFETY</span>
+        <h3>No browser live payment</h3>
+        <p>The browser page is a proof viewer. It does not trigger live payments from the browser.</p>
+      </article>
+
+      <article class="boundary-card boundary-warning">
+        <span class="boundary-badge amber">HONEST LIMITATION</span>
+        <h3>Seller-side receipt is sanitized</h3>
+        <p>The seller-side receipt proves payTo, payer, amount, tx/ref, verify=true, and settle=true from real seller logs. It does not claim a measured seller balance delta.</p>
+      </article>
+
+      <article class="boundary-card">
+        <span class="boundary-badge">MATURITY</span>
+        <h3>No production reliability claim</h3>
+        <p>This is a hackathon proof of the payment-gated citation flow, not a production reliability claim.</p>
+      </article>
+
+      <article class="boundary-card boundary-final">
+        <span class="boundary-badge live">BOUNDARY CHECK PASS</span>
+        <h3>Evidence boundaries enforced</h3>
+        <p>Automated check passed: LIVE_GATEWAY on Arc Testnet, proof-viewer-only browser page, sanitized seller receipt, and no positive mainnet or production reliability overclaim.</p>
+      </article>
+    </div>
   </section>
+
 
   <!-- 12. LINKS -->
   <footer class="links">
