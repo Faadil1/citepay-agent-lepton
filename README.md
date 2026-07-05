@@ -4,6 +4,14 @@ AI research agent that decides which sources are worth paying for, unlocks x402-
 
 Judge Memory Sentence: It picked which source to pay for, proved the payment on Arc/Gateway, then cited only that one.
 
+## Judge quick links
+
+- **Proof viewer source:** [docs/index.html](docs/index.html)
+- **V3 evidence:** [evidence/live-gateway-evidence-v3.json](evidence/live-gateway-evidence-v3.json)
+- **Settlement trace, sanitized:** [evidence/settlement-trace-v3.json](evidence/settlement-trace-v3.json)
+- **V3 harness:** [harness-v3.mjs](harness-v3.mjs)
+- **Demo script:** [DEMO-SCRIPT.md](DEMO-SCRIPT.md)
+
 ## What it does
 1. Evaluates candidate sources on relevance, price, and a fixed budget of 0.005 USDC.
 2. Rejects sources that are over budget or have a lower relevance/price ratio.
