@@ -26,6 +26,7 @@ Rejected:
 ## Live payment proof
 
 - payment_mode: LIVE_GATEWAY
+- network: eip155:5042002
 - amount: 0.001 USDC
 - paid request returned HTTP 200
 - final answer cites only S1
