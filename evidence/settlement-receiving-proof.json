@@ -12,6 +12,7 @@
   "seller_balance_after": null,
   "delta": null,
   "limitations": [
-    "No balance-query method is exposed by BatchFacilitatorClient in the current seller-v2.mjs — this receipt does NOT claim a measured before/after balance delta, only the logged settlement result."
+    "No balance-query method is exposed by BatchFacilitatorClient in the current seller-v2.mjs \u2014 this receipt does NOT claim a measured before/after balance delta, only the logged settlement result.",
+    "This receipt does not claim a measured seller balance delta. It proves seller-side payTo, verification, settlement success, payer, amount, and tx/ref from real seller logs."
   ]
 }
