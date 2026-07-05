@@ -1,0 +1,166 @@
+{
+  "timestamp": "2026-07-05T05:06:25.582Z",
+  "payment_mode": "LIVE_GATEWAY",
+  "network": "eip155:5042002",
+  "budget_usdc": 0.005,
+  "query": "How can AI agents compensate creators for cited evidence?",
+  "relevance_method": "jaccard_term_overlap_no_llm",
+  "selected_source_id": "S1",
+  "rejected_source_ids": [
+    "S2",
+    "S3"
+  ],
+  "events": [
+    {
+      "event": "v3_scoring",
+      "query": "How can AI agents compensate creators for cited evidence?",
+      "queryTokens": [
+        "ai",
+        "agents",
+        "compensate",
+        "creators",
+        "cited",
+        "evidence"
+      ]
+    },
+    {
+      "event": "candidate_sources_considered",
+      "candidates": [
+        {
+          "id": "S1",
+          "url": "http://localhost:4021/source/S1",
+          "price": 0.001,
+          "title": "Creator Citation Nanopayments",
+          "content": "AI agents can use nanopayments to pay creators when their work is selected and cited as evidence.",
+          "sourceTokens": [
+            "creator",
+            "citation",
+            "nanopayments",
+            "ai",
+            "agents",
+            "use",
+            "pay",
+            "creators",
+            "work",
+            "selected",
+            "cited",
+            "as",
+            "evidence"
+          ],
+          "relevanceScore": 0.357,
+          "matchedTerms": [
+            "ai",
+            "agents",
+            "creators",
+            "cited",
+            "evidence"
+          ],
+          "ratio": 357.143,
+          "overBudget": false
+        },
+        {
+          "id": "S2",
+          "url": "http://localhost:4021/source/S2",
+          "price": 0.02,
+          "title": "Expensive General Payments Overview",
+          "content": "A broad overview of payments, less specific to creator citation use cases.",
+          "sourceTokens": [
+            "expensive",
+            "general",
+            "payments",
+            "overview",
+            "broad",
+            "less",
+            "specific",
+            "creator",
+            "citation",
+            "use",
+            "cases"
+          ],
+          "relevanceScore": 0,
+          "matchedTerms": [],
+          "ratio": 0,
+          "overBudget": true
+        },
+        {
+          "id": "S3",
+          "url": "http://localhost:4021/source/S3",
+          "price": 0.001,
+          "title": "Secondary Creator Monetization Note",
+          "content": "A secondary note about creator monetization, useful but less directly relevant.",
+          "sourceTokens": [
+            "secondary",
+            "creator",
+            "monetization",
+            "note",
+            "about",
+            "useful",
+            "but",
+            "less",
+            "directly",
+            "relevant"
+          ],
+          "relevanceScore": 0,
+          "matchedTerms": [],
+          "ratio": 0,
+          "overBudget": false
+        }
+      ]
+    },
+    {
+      "event": "source_selected",
+      "selected": {
+        "id": "S1",
+        "url": "http://localhost:4021/source/S1",
+        "price": 0.001,
+        "relevanceScore": 0.357,
+        "ratio": 357.143,
+        "matchedTerms": [
+          "ai",
+          "agents",
+          "creators",
+          "cited",
+          "evidence"
+        ]
+      }
+    },
+    {
+      "event": "source_rejected",
+      "rejected": [
+        {
+          "id": "S2",
+          "price": 0.02,
+          "relevanceScore": 0,
+          "ratio": 0,
+          "matchedTerms": [],
+          "reason": "over_budget"
+        },
+        {
+          "id": "S3",
+          "price": 0.001,
+          "relevanceScore": 0,
+          "ratio": 0,
+          "matchedTerms": [],
+          "reason": "lower_relevance_price_ratio"
+        }
+      ]
+    },
+    {
+      "event": "budget_before_after",
+      "before": 0.005,
+      "after": 0.004
+    }
+  ],
+  "payment_evidence": {
+    "amount": "0.001",
+    "transaction": "1310f944-6996-4c6a-a32f-c7c27efc4966",
+    "status": 200,
+    "source_id": "S1"
+  },
+  "final_answer": {
+    "text": "CitePay selected S1 because it had the strongest computed relevance/price ratio (357.143) for the query \"How can AI agents compensate creators for cited evidence?\". Citation: [S1]. Receipt: 1310f944-6996-4c6a-a32f-c7c27efc4966.",
+    "citations": [
+      "S1"
+    ]
+  }
+}

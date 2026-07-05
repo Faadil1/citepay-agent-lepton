@@ -35,3 +35,33 @@ No Gateway settlement means no unlock. No unlock means no citation.
 - Testnet only
 - No mainnet settlement claimed
 - Terminal/log proof surface by design
+
+## V3 — computed relevance scoring
+
+V3 improves the agentic layer by computing relevance from token overlap between the user query and each source's title/content metadata.
+
+The agent now logs:
+- query tokens
+- source tokens
+- matched terms
+- computed relevance score
+- relevance/price ratio
+- rejection reasons
+- selected paid source
+
+V3 keeps the V2 payment path frozen and still settles through Circle Gateway on Arc Testnet.
+
+Latest V3 proof:
+- payment_mode: `LIVE_GATEWAY`
+- tx/ref: `1310f944-6996-4c6a-a32f-c7c27efc4966`
+- selected source: `S1`
+- rejected sources: `S2`, `S3`
+- harness: `ALL V3 CHECKS PASSED`
+
+## CitePay Web
+
+`web/index.html` is a static proof viewer. It renders the captured V3 evidence as a visual flow:
+
+query → computed relevance → selected/rejected sources → live payment ref → final paid citation
+
+It does not trigger browser payments and does not modify the live Gateway flow.

@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>CitePay Agent — Proof Viewer</title>
+<style>
+  :root { --bg:#0b0d10; --panel:#14171c; --line:#262b33; --text:#e6e8eb; --muted:#8a929e; --accent:#5eead4; --reject:#4a3236; --select:#1f3d33; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--text); font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; padding: 32px; line-height:1.5; }
+  h1 { font-size: 18px; margin:0 0 4px; }
+  .sub { color: var(--muted); font-size: 13px; margin-bottom: 24px; }
+  .query { background: var(--panel); border:1px solid var(--line); padding:12px 16px; border-radius:6px; margin-bottom:24px; }
+  .cards { display:grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap:12px; margin-bottom:24px; }
+  .card { background: var(--panel); border:1px solid var(--line); border-radius:6px; padding:14px; font-size:13px; }
+  .card.selected { border-color: var(--accent); background: var(--select); }
+  .card.rejected { opacity:0.7; background: var(--reject); }
+  .card h3 { margin:0 0 6px; font-size:14px; }
+  .tag { display:inline-block; font-size:11px; padding:2px 6px; border-radius:4px; margin-top:6px; }
+  .tag.select { background: var(--accent); color:#00201b; }
+  .tag.reject { background:#8a4b52; color:#fff; }
+  .terms { color: var(--muted); font-size:11px; margin-top:4px; }
+  .section { margin-bottom: 24px; }
+  .section h2 { font-size:13px; color: var(--muted); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:8px; }
+  .kv { display:grid; grid-template-columns: 160px 1fr; gap:4px 12px; font-size:13px; background:var(--panel); border:1px solid var(--line); border-radius:6px; padding:12px 16px; }
+  .kv div:nth-child(odd) { color: var(--muted); }
+  .txref { color: var(--accent); word-break: break-all; }
+  .answer { background: var(--panel); border:1px solid var(--accent); border-radius:6px; padding:14px 16px; font-size:13px; }
+  .missing { color:#e08a8a; font-size:13px; padding:16px; border:1px dashed #e08a8a; border-radius:6px; }
+</style>
+</head>
+<body>
+<h1>CitePay Agent — Proof Viewer (V3)</h1>
+<div class="sub">Static, offline, no framework. Reads the embedded evidence JSON below — replace it with your real evidence-log-v3.json before publishing.</div>
+
+<div id="root"></div>
+
+<!--
+  REPLACE the contents of this script tag with the real evidence-log-v3.json
+  produced by `node harness-v3.mjs`. Do not fetch() a live endpoint — this
+  viewer only ever displays a captured evidence file (LIVE evidence, PRESEEDED display).
+-->
+<script id="evidence-data" type="application/json">
+{
+  "timestamp": "2026-07-05T05:06:25.582Z",
+  "payment_mode": "LIVE_GATEWAY",
+  "network": "eip155:5042002",
+  "budget_usdc": 0.005,
+  "query": "How can AI agents compensate creators for cited evidence?",
+  "relevance_method": "jaccard_term_overlap_no_llm",
+  "selected_source_id": "S1",
+  "rejected_source_ids": [
+    "S2",
+    "S3"
+  ],
+  "events": [
+    {
+      "event": "v3_scoring",
+      "query": "How can AI agents compensate creators for cited evidence?",
+      "queryTokens": [
+        "ai",
+        "agents",
+        "compensate",
+        "creators",
+        "cited",
+        "evidence"
+      ]
+    },
+    {
+      "event": "candidate_sources_considered",
+      "candidates": [
+        {
+          "id": "S1",
+          "url": "http://localhost:4021/source/S1",
+          "price": 0.001,
+          "title": "Creator Citation Nanopayments",
+          "content": "AI agents can use nanopayments to pay creators when their work is selected and cited as evidence.",
+          "sourceTokens": [
+            "creator",
+            "citation",
+            "nanopayments",
+            "ai",
+            "agents",
+            "use",
+            "pay",
+            "creators",
+            "work",
+            "selected",
+            "cited",
+            "as",
+            "evidence"
+          ],
+          "relevanceScore": 0.357,
+          "matchedTerms": [
+            "ai",
+            "agents",
+            "creators",
+            "cited",
+            "evidence"
+          ],
+          "ratio": 357.143,
+          "overBudget": false
+        },
+        {
+          "id": "S2",
+          "url": "http://localhost:4021/source/S2",
+          "price": 0.02,
+          "title": "Expensive General Payments Overview",
+          "content": "A broad overview of payments, less specific to creator citation use cases.",
+          "sourceTokens": [
+            "expensive",
+            "general",
+            "payments",
+            "overview",
+            "broad",
+            "less",
+            "specific",
+            "creator",
+            "citation",
+            "use",
+            "cases"
+          ],
+          "relevanceScore": 0,
+          "matchedTerms": [],
+          "ratio": 0,
+          "overBudget": true
+        },
+        {
+          "id": "S3",
+          "url": "http://localhost:4021/source/S3",
+          "price": 0.001,
+          "title": "Secondary Creator Monetization Note",
+          "content": "A secondary note about creator monetization, useful but less directly relevant.",
+          "sourceTokens": [
+            "secondary",
+            "creator",
+            "monetization",
+            "note",
+            "about",
+            "useful",
+            "but",
+            "less",
+            "directly",
+            "relevant"
+          ],
+          "relevanceScore": 0,
+          "matchedTerms": [],
+          "ratio": 0,
+          "overBudget": false
+        }
+      ]
+    },
+    {
+      "event": "source_selected",
+      "selected": {
+        "id": "S1",
+        "url": "http://localhost:4021/source/S1",
+        "price": 0.001,
+        "relevanceScore": 0.357,
+        "ratio": 357.143,
+        "matchedTerms": [
+          "ai",
+          "agents",
+          "creators",
+          "cited",
+          "evidence"
+        ]
+      }
+    },
+    {
+      "event": "source_rejected",
+      "rejected": [
+        {
+          "id": "S2",
+          "price": 0.02,
+          "relevanceScore": 0,
+          "ratio": 0,
+          "matchedTerms": [],
+          "reason": "over_budget"
+        },
+        {
+          "id": "S3",
+          "price": 0.001,
+          "relevanceScore": 0,
+          "ratio": 0,
+          "matchedTerms": [],
+          "reason": "lower_relevance_price_ratio"
+        }
+      ]
+    },
+    {
+      "event": "budget_before_after",
+      "before": 0.005,
+      "after": 0.004
+    }
+  ],
+  "payment_evidence": {
+    "amount": "0.001",
+    "transaction": "1310f944-6996-4c6a-a32f-c7c27efc4966",
+    "status": 200,
+    "source_id": "S1"
+  },
+  "final_answer": {
+    "text": "CitePay selected S1 because it had the strongest computed relevance/price ratio (357.143) for the query \"How can AI agents compensate creators for cited evidence?\". Citation: [S1]. Receipt: 1310f944-6996-4c6a-a32f-c7c27efc4966.",
+    "citations": [
+      "S1"
+    ]
+  }
+}
+</script>
+
+<script>
+function render() {
+  const root = document.getElementById('root');
+  const raw = document.getElementById('evidence-data').textContent;
+  let data;
+  try { data = JSON.parse(raw); } catch (e) {
+    root.innerHTML = '<div class="missing">Evidence JSON is invalid.</div>';
+    return;
+  }
+  if (data._placeholder) {
+    root.innerHTML = '<div class="missing">No real evidence loaded yet. Replace the #evidence-data script tag with evidence-log-v3.json.</div>';
+    return;
+  }
+
+  const considered = data.events.find(e => e.event === 'candidate_sources_considered').candidates;
+  const selectedId = data.selected_source_id;
+  const rejectedEvent = data.events.find(e => e.event === 'source_rejected').rejected;
+  const rejectedMap = Object.fromEntries(rejectedEvent.map(r => [r.id, r]));
+
+  let html = '';
+  html += `<div class="query"><strong>Query:</strong> ${data.query}</div>`;
+
+  html += '<div class="section"><h2>Candidate sources</h2><div class="cards">';
+  considered.forEach(c => {
+    const isSelected = c.id === selectedId;
+    const rej = rejectedMap[c.id];
+    html += `<div class="card ${isSelected ? 'selected' : 'rejected'}">
+      <h3>${c.id} — ${c.title || ''}</h3>
+      <div>price: ${c.price} USDC</div>
+      <div>computed relevance: ${c.relevanceScore}</div>
+      <div>ratio: ${c.ratio}</div>
+      <div class="terms">matched terms: ${(c.matchedTerms || []).join(', ') || '(none)'}</div>
+      ${isSelected
+        ? '<span class="tag select">SELECTED — paid</span>'
+        : `<span class="tag reject">REJECTED — ${rej ? rej.reason : ''}</span>`}
+    </div>`;
+  });
+  html += '</div></div>';
+
+  html += `<div class="section"><h2>Live payment</h2><div class="kv">
+    <div>payment_mode</div><div>${data.payment_mode}</div>
+    <div>network</div><div>${data.network}</div>
+    <div>tx / ref</div><div class="txref">${data.payment_evidence.transaction}</div>
+    <div>amount</div><div>${data.payment_evidence.amount}</div>
+    <div>relevance method</div><div>${data.relevance_method}</div>
+  </div></div>`;
+
+  html += `<div class="section"><h2>Final answer</h2><div class="answer">${data.final_answer.text}</div></div>`;
+
+  root.innerHTML = html;
+}
+render();
+</script>
+</body>
+</html>
