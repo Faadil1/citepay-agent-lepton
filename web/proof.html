@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CitePay Agent — Full Proof</title>
+<style>
+  :root {
+    --bg: #F6F3EC;
+    --ink: #1B1B18;
+    --muted: #6B6A63;
+    --hairline: #DDD8CB;
+    --panel: #15140F;
+    --panel-text: #F1EEE4;
+    --panel-muted: #9A968A;
+    --open: #3C7A5A;
+    --closed: #B4402A;
+    --limit: #A9752B;
+    --font-display: "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+    --font-body: "Inter", -apple-system, "Segoe UI", Roboto, sans-serif;
+    --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font-family: var(--font-body); line-height: 1.55;
+  }
+  .wrap { max-width: 720px; margin: 0 auto; padding: 0 24px; }
+  section { padding: 40px 0; border-bottom: 1px solid var(--hairline); }
+  section:last-of-type { border-bottom: none; }
+  .eyebrow {
+    font-family: var(--font-mono); font-size: 11px; text-transform: uppercase;
+    letter-spacing: 0.1em; color: var(--muted); margin: 0 0 20px;
+  }
+  h1 {
+    font-family: var(--font-display); font-weight: 400; font-size: clamp(28px, 4.5vw, 38px);
+    margin: 0 0 8px; padding-top: 48px;
+  }
+  .back-link {
+    font-family: var(--font-mono); font-size: 12.5px; color: var(--muted); text-decoration: none;
+    border-bottom: 1px solid var(--hairline);
+  }
+
+  /* Dark evidence panels — consistent with homepage gate module */
+  .panel {
+    background: var(--panel); color: var(--panel-text); border-radius: 6px; padding: 26px 24px;
+  }
+  .kv { display: grid; grid-template-columns: 170px 1fr; gap: 10px 16px; font-size: 14px; }
+  .kv .k { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; color: var(--panel-muted); letter-spacing: 0.05em; padding-top: 2px; }
+  .kv .v { font-family: var(--font-mono); word-break: break-all; color: var(--panel-text); }
+
+  /* Source decision lanes (compact, single statement each — no re-explaining) */
+  .decision-list { display: flex; flex-direction: column; gap: 0; }
+  .decision-row {
+    display: grid; grid-template-columns: 40px 1fr auto; gap: 16px; align-items: baseline;
+    padding: 14px 0; border-bottom: 1px solid rgba(255,255,255,0.08); font-size: 14px;
+  }
+  .decision-row:last-child { border-bottom: none; }
+  .decision-row .id { font-family: var(--font-mono); font-weight: 700; }
+  .decision-row.open .id { color: var(--open); }
+  .decision-row.closed .id { color: var(--closed); }
+  .decision-row .detail { color: var(--panel-muted); font-size: 13px; }
+  .decision-row .state { font-family: var(--font-mono); font-size: 12px; text-align: right; }
+  .decision-row.open .state { color: var(--open); }
+  .decision-row.closed .state { color: var(--closed); }
+
+  /* Seller receipt limitation callout */
+  .limitation-callout {
+    margin-top: 18px; padding: 16px 18px; border-left: 3px solid var(--limit);
+    background: rgba(169,117,43,0.07); color: var(--ink); font-size: 14px; line-height: 1.6;
+  }
+
+  /* Boundary check */
+  .boundary-status {
+    font-family: var(--font-mono); font-size: 13px; font-weight: 700; color: var(--open);
+    margin-bottom: 16px;
+  }
+  .boundary-list { list-style: none; margin: 0; padding: 0; font-size: 14px; color: var(--ink); }
+  .boundary-list li { padding: 8px 0; border-bottom: 1px solid var(--hairline); }
+  .boundary-list li:last-child { border-bottom: none; }
+
+  /* Sponsor / limitations */
+  .plain-list { list-style: none; margin: 0; padding: 0; }
+  .plain-list li { padding: 12px 0; border-bottom: 1px solid var(--hairline); font-size: 14.5px; }
+  .plain-list li:last-child { border-bottom: none; }
+  .plain-list b { color: var(--ink); }
+  .limitations-list li::before { content: "— "; color: var(--limit); }
+
+  .links { display: flex; gap: 24px; flex-wrap: wrap; padding-bottom: 64px; }
+  .link-btn { font-family: var(--font-mono); font-size: 13px; color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--ink); padding-bottom: 2px; }
+
+  @media (max-width: 640px) {
+    .kv, .decision-row { grid-template-columns: 1fr; gap: 3px; }
+    .decision-row .state { text-align: left; margin-top: 4px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <section style="border-bottom:none; padding-bottom: 0;">
+    <a class="back-link" href="index.html">← Back</a>
+    <h1>Full proof</h1>
+    <p style="color:var(--muted); font-size:14px; margin:0;">CitePay Agent — Lepton Agents Hackathon (Canteen + Circle + Arc)</p>
+  </section>
+
+  <!-- 1. PAYMENT EVIDENCE -->
+  <section>
+    <div class="eyebrow">Payment evidence</div>
+    <div class="panel">
+      <div class="kv" id="payment-kv"></div>
+    </div>
+  </section>
+
+  <!-- 2. SOURCE DECISION -->
+  <section>
+    <div class="eyebrow">Source decision</div>
+    <div class="panel">
+      <div class="decision-list" id="decision-rows"></div>
+    </div>
+  </section>
+
+  <!-- 3. SELLER-SIDE RECEIPT -->
+  <section>
+    <div class="eyebrow">Seller-side receipt — PASS_WITH_HONEST_LIMITATION</div>
+    <div class="panel">
+      <div class="kv" id="seller-kv"></div>
+    </div>
+    <div class="limitation-callout" id="seller-limitation"></div>
+  </section>
+
+  <!-- 4. EVIDENCE BOUNDARY CHECK -->
+  <section>
+    <div class="eyebrow">Evidence boundary check</div>
+    <div class="boundary-status">Boundary check: PASS</div>
+    <ul class="boundary-list">
+      <li>LIVE means Arc Testnet LIVE_GATEWAY settlement.</li>
+      <li>Browser page is proof-viewer only, not a live payment trigger.</li>
+      <li>Seller-side receipt is sanitized and does not claim measured balance delta.</li>
+      <li>No mainnet settlement claim.</li>
+      <li>No production reliability claim.</li>
+    </ul>
+  </section>
+
+  <!-- 5. SPONSOR RELEVANCE -->
+  <section>
+    <div class="eyebrow">Sponsor relevance</div>
+    <ul class="plain-list">
+      <li><b>Circle Gateway</b> — x402 payment and settlement path</li>
+      <li><b>Arc Testnet</b> — settlement network</li>
+      <li><b>USDC</b> — stable nanopayment unit</li>
+    </ul>
+  </section>
+
+  <!-- 6. HONEST LIMITATIONS -->
+  <section>
+    <div class="eyebrow">Honest limitations</div>
+    <ul class="plain-list limitations-list">
+      <li>Testnet only</li>
+      <li>No mainnet claim</li>
+      <li>No browser-based live payment</li>
+      <li>Seller-side receipt is sanitized</li>
+      <li>No production reliability claim</li>
+    </ul>
+  </section>
+
+  <!-- 7. LINKS -->
+  <footer class="links">
+    <a class="link-btn" href="index.html">← Homepage</a>
+    <a class="link-btn" href="https://github.com/Faadil1/citepay-agent-lepton">View repo</a>
+    <a class="link-btn" href="#">Watch demo</a>
+  </footer>
+
+</div>
+
+<script id="payment-evidence-data" type="application/json">
+{
+  "payment_mode": "LIVE_GATEWAY",
+  "network": "eip155:5042002",
+  "amount": "0.001",
+  "tx_ref": "f1983b38-e27e-4126-8ed1-69e76927d25d",
+  "verify": true,
+  "settle": true,
+  "unlock": "HTTP 200"
+}
+</script>
+
+<script id="evidence-v3" type="application/json">
+{
+  "selected_source_id": "S1",
+  "candidates": [
+    { "id": "S1", "title": "paid + cited", "price": 0.001, "ratio": 357.143, "overBudget": false },
+    { "id": "S2", "title": "rejected — not paid — not cited", "price": 0.02, "ratio": 0, "overBudget": true, "reason": "over_budget" },
+    { "id": "S3", "title": "rejected — not paid — not cited", "price": 0.001, "ratio": 0, "overBudget": false, "reason": "lower_relevance_price_ratio" }
+  ]
+}
+</script>
+
+<script id="seller-receipt-data" type="application/json">
+{
+  "seller_address": "0x9252470F6237E16d087E0e39B121B3e770Ea1972",
+  "payer": "0x44062bfded95d441a540f01ff21c1f1b8c841eea",
+  "amount_paid_usdc": "0.001",
+  "tx_ref": "f1983b38-e27e-4126-8ed1-69e76927d25d",
+  "limitations": [
+    "This receipt does not claim a measured seller balance delta. It proves seller-side payTo, verification, settlement success, payer, amount, and tx/ref from real seller logs."
+  ]
+}
+</script>
+
+<script>
+function render() {
+  const pay = JSON.parse(document.getElementById('payment-evidence-data').textContent);
+  const v3 = JSON.parse(document.getElementById('evidence-v3').textContent);
+  const receipt = JSON.parse(document.getElementById('seller-receipt-data').textContent);
+  const reasonLabel = r => r === 'over_budget' ? 'OVER BUDGET' : 'LOWER RELEVANCE/PRICE';
+
+  document.getElementById('payment-kv').innerHTML = `
+    <div class="k">payment_mode</div><div class="v">${pay.payment_mode}</div>
+    <div class="k">network</div><div class="v">${pay.network}</div>
+    <div class="k">amount</div><div class="v">${pay.amount} USDC</div>
+    <div class="k">tx / ref</div><div class="v">${pay.tx_ref}</div>
+    <div class="k">verify</div><div class="v">${pay.verify}</div>
+    <div class="k">settle</div><div class="v">${pay.settle}</div>
+    <div class="k">unlock</div><div class="v">${pay.unlock}</div>`;
+
+  const ordered = [...v3.candidates].sort((a, b) => (a.id === v3.selected_source_id ? -1 : b.id === v3.selected_source_id ? 1 : 0));
+  document.getElementById('decision-rows').innerHTML = ordered.map(c => {
+    const isOpen = c.id === v3.selected_source_id;
+    return `<div class="decision-row ${isOpen ? 'open' : 'closed'}">
+      <div class="id">${c.id}</div>
+      <div class="detail">${c.price} USDC${c.ratio ? ` · ratio ${c.ratio}` : ''}${!isOpen ? ` · ${reasonLabel(c.reason)}` : ''}</div>
+      <div class="state">${isOpen ? 'PAID — CITED' : 'NOT PAID — NOT CITED'}</div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('seller-kv').innerHTML = `
+    <div class="k">seller / payTo</div><div class="v">${receipt.seller_address}</div>
+    <div class="k">payer</div><div class="v">${receipt.payer}</div>
+    <div class="k">amount</div><div class="v">${receipt.amount_paid_usdc} USDC</div>
+    <div class="k">tx / ref</div><div class="v">${receipt.tx_ref}</div>`;
+  document.getElementById('seller-limitation').textContent = receipt.limitations[0];
+}
+render();
+</script>
+</body>
+</html>

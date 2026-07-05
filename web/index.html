@@ -6,80 +6,98 @@
 <title>CitePay Agent — No pay, no cite.</title>
 <style>
   :root {
-    --bg: #0A0A0A;
-    --text: #F2F2F0;
-    --muted: #8A8A85;
-    --border: #262626;
-    --open: #C9FF3D;
-    --closed: #FF5A5A;
-    --limit: #F2B84B;
-    --font-display: "Space Grotesk", "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
-    --font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --bg: #F6F3EC;
+    --ink: #1B1B18;
+    --muted: #6B6A63;
+    --hairline: #DDD8CB;
+    --panel: #15140F;
+    --panel-text: #F1EEE4;
+    --panel-muted: #9A968A;
+    --open: #3C7A5A;
+    --closed: #B4402A;
+    --limit: #A9752B;
+    --font-display: "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+    --font-body: "Inter", -apple-system, "Segoe UI", Roboto, sans-serif;
     --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
   }
   * { box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
   body {
-    margin: 0; background: var(--bg); color: var(--text);
-    font-family: var(--font-body); line-height: 1.55;
+    margin: 0; background: var(--bg); color: var(--ink);
+    font-family: var(--font-body); line-height: 1.5;
   }
   .wrap { max-width: 760px; margin: 0 auto; padding: 0 24px; }
-  section { padding: 56px 0; border-bottom: 1px solid var(--border); }
-  section:last-of-type { border-bottom: none; }
-  .label {
+  section { padding: 44px 0; }
+  .eyebrow {
     font-family: var(--font-mono); font-size: 11px; text-transform: uppercase;
-    letter-spacing: 0.1em; color: var(--muted); margin: 0 0 20px;
+    letter-spacing: 0.1em; color: var(--muted); margin: 0 0 16px;
   }
-  .hero { padding: 72px 0 48px; }
-  .eyebrow { font-family: var(--font-mono); font-size: 12px; color: var(--muted); letter-spacing: 0.08em; margin: 0 0 18px; }
+
+  /* Hero */
+  .hero { padding: 56px 0 8px; border-bottom: 1px solid var(--hairline); }
   h1 {
-    font-family: var(--font-display); font-weight: 700;
-    font-size: clamp(36px, 6vw, 56px); line-height: 1.05; letter-spacing: -0.02em;
-    margin: 0 0 16px;
+    font-family: var(--font-display); font-weight: 400; font-style: normal;
+    font-size: clamp(34px, 5.5vw, 50px); line-height: 1.08; letter-spacing: -0.01em;
+    margin: 0 0 14px; color: var(--ink);
   }
-  .hero .promise { font-size: 18px; color: var(--text); max-width: 520px; margin: 0; }
-  .problem p { font-size: 20px; font-weight: 500; max-width: 560px; margin: 0; color: var(--text); }
-  .steps { list-style: none; margin: 0; padding: 0; }
-  .steps li { font-size: 15px; padding: 10px 0; color: var(--text); display: flex; gap: 12px; }
-  .steps .num { font-family: var(--font-mono); color: var(--muted); font-size: 13px; }
-  .gate { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; border: 1px solid var(--border); }
-  .lane { padding: 24px 20px; border-left: 1px solid var(--border); }
-  .lane:first-child { border-left: none; }
-  .lane.open { border-top: 2px solid var(--open); }
-  .lane.closed { border-top: 2px solid var(--closed); }
-  .lane-state { font-family: var(--font-mono); font-size: 12px; font-weight: 700; letter-spacing: 0.05em; margin-bottom: 14px; }
+  .subline { font-size: 17px; color: var(--ink); max-width: 480px; margin: 0 0 6px; }
+
+  /* Problem */
+  .problem { border-bottom: 1px solid var(--hairline); padding-top: 32px; padding-bottom: 32px; }
+  .problem p { font-size: 17px; color: var(--muted); max-width: 520px; margin: 0; }
+
+  /* Gate — the one dark module */
+  .gate-section { padding: 40px 0; }
+  .gate-panel {
+    background: var(--panel); color: var(--panel-text); border-radius: 6px;
+    padding: 32px 28px;
+  }
+  .gate-panel .gate-label {
+    font-family: var(--font-mono); font-size: 11px; text-transform: uppercase;
+    letter-spacing: 0.1em; color: var(--panel-muted); margin: 0 0 22px;
+  }
+  .gate { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; }
+  .lane { padding: 8px 16px; border-left: 1px solid rgba(255,255,255,0.1); }
+  .lane:first-child { border-left: none; padding-left: 0; }
+  .lane-state {
+    font-family: var(--font-mono); font-size: 12px; font-weight: 600; letter-spacing: 0.05em;
+    margin-bottom: 10px;
+  }
   .lane.open .lane-state { color: var(--open); }
   .lane.closed .lane-state { color: var(--closed); }
-  .lane h3 { font-size: 15px; margin: 0 0 10px; color: var(--text); font-weight: 600; }
-  .lane .meta { font-size: 13px; color: var(--muted); margin-bottom: 4px; }
-  .lane .status-line { font-family: var(--font-mono); font-size: 12px; margin-top: 12px; }
+  .lane h3 { font-size: 14px; margin: 0 0 8px; font-weight: 600; color: var(--panel-text); }
+  .lane .meta { font-size: 12.5px; color: var(--panel-muted); margin-bottom: 3px; }
+  .lane .status-line { font-family: var(--font-mono); font-size: 11.5px; margin-top: 10px; }
   .lane.open .status-line { color: var(--open); }
   .lane.closed .status-line { color: var(--closed); }
-  .lane .reason { font-size: 12px; color: var(--muted); margin-top: 4px; }
-  .lane .txref { font-family: var(--font-mono); font-size: 11px; color: var(--text); margin-top: 14px; word-break: break-all; border-top: 1px solid var(--border); padding-top: 10px; }
-  .evidence-list { border-top: 1px solid var(--border); }
-  .ev-row { display: grid; grid-template-columns: 180px 1fr; gap: 16px; padding: 12px 0; border-bottom: 1px solid var(--border); font-size: 14px; }
-  .ev-row .k { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; color: var(--muted); letter-spacing: 0.05em; padding-top: 2px; }
-  .ev-row .v { font-family: var(--font-mono); word-break: break-all; }
-  .seller-label { font-family: var(--font-mono); font-size: 12px; font-weight: 700; color: var(--limit); letter-spacing: 0.04em; margin-bottom: 16px; }
-  .seller-kv { display: grid; grid-template-columns: 140px 1fr; gap: 8px 16px; font-size: 14px; margin-bottom: 18px; }
-  .seller-kv .k { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; color: var(--muted); }
-  .seller-kv .v { font-family: var(--font-mono); word-break: break-all; }
-  .limitation-text { font-size: 14px; color: var(--text); max-width: 600px; line-height: 1.65; }
-  .plain-list { list-style: none; margin: 0; padding: 0; }
-  .plain-list li { padding: 12px 0; border-bottom: 1px solid var(--border); font-size: 14.5px; color: var(--text); }
-  .plain-list li:last-child { border-bottom: none; }
-  .plain-list b { color: var(--text); }
-  .limitations-list li { color: var(--text); font-size: 14.5px; }
-  .limitations-list li::before { content: "— "; color: var(--limit); }
-  .links { display: flex; gap: 20px; flex-wrap: wrap; padding-bottom: 72px; }
-  .link-btn { font-family: var(--font-mono); font-size: 13px; color: var(--text); text-decoration: none; border-bottom: 1px solid var(--border); padding-bottom: 2px; }
-  .link-btn:hover { border-color: var(--text); }
+  .lane .reason { font-size: 11.5px; color: var(--panel-muted); margin-top: 3px; }
+  .gate-panel .tx-line {
+    margin-top: 22px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.1);
+    font-family: var(--font-mono); font-size: 12px; color: var(--panel-text); word-break: break-all;
+  }
+  .gate-panel .tx-line a { color: var(--open); text-decoration: none; border-bottom: 1px solid var(--open); }
+
+  /* Proof snapshot */
+  .snapshot { border-top: 1px solid var(--hairline); padding-top: 28px; }
+  .snap-row {
+    display: flex; flex-wrap: wrap; gap: 8px 20px; font-family: var(--font-mono); font-size: 12.5px;
+  }
+  .snap-row span { color: var(--muted); }
+  .snap-row b { color: var(--ink); font-weight: 600; }
+
+  /* Links */
+  .links {
+    display: flex; gap: 24px; flex-wrap: wrap; padding: 32px 0 64px;
+    border-top: 1px solid var(--hairline);
+  }
+  .link-btn {
+    font-family: var(--font-mono); font-size: 13px; color: var(--ink); text-decoration: none;
+    border-bottom: 1px solid var(--ink); padding-bottom: 2px;
+  }
+  .link-btn.primary { color: var(--open); border-color: var(--open); }
+
   @media (max-width: 640px) {
-    .gate { grid-template-columns: 1fr; }
-    .lane { border-left: none; border-top: 1px solid var(--border); }
-    .lane:first-child { border-top: 2px solid var(--open); }
-    .ev-row, .seller-kv { grid-template-columns: 1fr; gap: 4px; }
+    .gate { grid-template-columns: 1fr; row-gap: 20px; }
+    .lane { border-left: none; padding-left: 0; }
   }
 </style>
 </head>
@@ -89,102 +107,65 @@
   <header class="hero">
     <div class="eyebrow">CITEPAY AGENT</div>
     <h1>No pay, no cite.</h1>
-    <p class="promise">CitePay pays the one source it cites — and proves it on Arc.</p>
+    <p class="subline">CitePay pays the one source it cites — and proves it on Arc.</p>
   </header>
 
   <section class="problem">
-    <p>Every AI citation uses someone's work for free. CitePay makes citation cost something — and proves it.</p>
+    <p>AI agents cite sources for free. CitePay makes citation cost something.</p>
   </section>
 
-  <section>
-    <div class="label">How it works</div>
-    <ol class="steps">
-      <li><span class="num">01</span>Evaluate sources</li>
-      <li><span class="num">02</span>Pay the selected source</li>
-      <li><span class="num">03</span>Cite only the paid source</li>
-    </ol>
+  <section class="gate-section">
+    <div class="gate-panel">
+      <div class="gate-label">The Gate — judge moment</div>
+      <div class="gate" id="gate-lanes"></div>
+      <div class="tx-line" id="tx-line"></div>
+    </div>
   </section>
 
-  <section id="gate">
-    <div class="label">The Gate</div>
-    <div class="gate" id="gate-lanes"></div>
-  </section>
-
-  <section>
-    <div class="label">Evidence</div>
-    <div class="evidence-list" id="evidence-list"></div>
-  </section>
-
-  <section>
-    <div class="seller-label">SELLER-SIDE — PASS_WITH_HONEST_LIMITATION</div>
-    <div class="seller-kv" id="seller-kv"></div>
-    <div class="limitation-text" id="seller-limitation"></div>
-  </section>
-
-  <section>
-    <div class="label">Sponsor relevance</div>
-    <ul class="plain-list">
-      <li><b>Circle Gateway</b> — x402 payment and settlement path</li>
-      <li><b>Arc Testnet</b> — settlement network</li>
-      <li><b>USDC</b> — stable nanopayment unit</li>
-    </ul>
-  </section>
-
-  <section>
-    <div class="label">Honest limitations</div>
-    <ul class="plain-list limitations-list">
-      <li>Testnet only</li>
-      <li>No mainnet claim</li>
-      <li>No browser-based live payment UI</li>
-      <li>Seller-side receipt is sanitized</li>
-      <li>No production reliability claim</li>
-    </ul>
+  <section class="snapshot">
+    <div class="eyebrow">Proof snapshot</div>
+    <div class="snap-row">
+      <span>payment_mode</span><b>LIVE_GATEWAY</b>
+      <span>network</span><b>Arc Testnet</b>
+      <span>gateway</span><b>Circle Gateway x402</b>
+      <span>amount</span><b>0.001 USDC</b>
+      <span>verify</span><b>true</b>
+      <span>settle</span><b>true</b>
+      <span>unlock</span><b>HTTP 200</b>
+    </div>
   </section>
 
   <footer class="links">
-    <a class="link-btn" href="https://github.com/Faadil1/citepay-agent-lepton">View Repo</a>
-    <a class="link-btn" href="#">Watch Demo</a>
+    <a class="link-btn primary" href="proof.html">View full proof →</a>
+    <a class="link-btn" href="https://github.com/Faadil1/citepay-agent-lepton">View repo</a>
+    <a class="link-btn" href="#">Watch demo</a>
   </footer>
 
 </div>
 
 <script id="evidence-v3" type="application/json">
 {
-  "query": "How can AI agents compensate creators for cited evidence?",
-  "payment_mode": "LIVE_GATEWAY",
-  "network": "eip155:5042002",
-  "budget_usdc": 0.005,
   "selected_source_id": "S1",
   "candidates": [
-    { "id": "S1", "title": "Creator Citation Nanopayments", "price": 0.001, "relevanceScore": 0.357, "ratio": 357.143, "overBudget": false },
-    { "id": "S2", "title": "Expensive General Payments Overview", "price": 0.02, "relevanceScore": 0, "ratio": 0, "overBudget": true, "reason": "over_budget" },
-    { "id": "S3", "title": "Secondary Creator Monetization Note", "price": 0.001, "relevanceScore": 0, "ratio": 0, "overBudget": false, "reason": "lower_relevance_price_ratio" }
+    { "id": "S1", "title": "Creator Citation Nanopayments", "price": 0.001, "ratio": 357.143, "overBudget": false },
+    { "id": "S2", "title": "Expensive General Payments Overview", "price": 0.02, "ratio": 0, "overBudget": true, "reason": "over_budget" },
+    { "id": "S3", "title": "Secondary Creator Monetization Note", "price": 0.001, "ratio": 0, "overBudget": false, "reason": "lower_relevance_price_ratio" }
   ]
 }
 </script>
 
-<script id="seller-receipt-data" type="application/json">
+<script id="receipt-data" type="application/json">
 {
-  "payment_mode": "LIVE_GATEWAY",
-  "network": "eip155:5042002",
-  "seller_address": "0x9252470F6237E16d087E0e39B121B3e770Ea1972",
-  "selected_source_id": "S1",
-  "tx_ref": "f1983b38-e27e-4126-8ed1-69e76927d25d",
-  "amount_paid_usdc": "0.001",
-  "verify_is_valid": true,
-  "settle_success": true,
-  "payer": "0x44062bfded95d441a540f01ff21c1f1b8c841eea",
-  "limitations": [
-    "This receipt does not claim a measured seller balance delta. It proves seller-side payTo, verification, settlement success, payer, amount, and tx/ref from real seller logs."
-  ]
+  "tx_ref": "f1983b38-e27e-4126-8ed1-69e76927d25d"
 }
 </script>
 
 <script>
 function render() {
   const v3 = JSON.parse(document.getElementById('evidence-v3').textContent);
-  const receipt = JSON.parse(document.getElementById('seller-receipt-data').textContent);
+  const receipt = JSON.parse(document.getElementById('receipt-data').textContent);
   const reasonLabel = r => r === 'over_budget' ? 'OVER BUDGET' : 'LOWER RELEVANCE/PRICE';
+  const shortTx = receipt.tx_ref.slice(0, 8) + '…';
 
   const ordered = [...v3.candidates].sort((a, b) => (a.id === v3.selected_source_id ? -1 : b.id === v3.selected_source_id ? 1 : 0));
   document.getElementById('gate-lanes').innerHTML = ordered.map(c => {
@@ -194,26 +175,12 @@ function render() {
       <h3>${c.id} — ${c.title}</h3>
       <div class="meta">${c.price} USDC${c.ratio ? ` · ratio ${c.ratio}` : ''}</div>
       ${isOpen
-        ? `<div class="status-line">PAID → CITED</div><div class="txref">tx/ref: ${receipt.tx_ref}</div>`
+        ? `<div class="status-line">PAID → CITED</div>`
         : `<div class="status-line">NOT PAID → NOT CITED</div><div class="reason">${reasonLabel(c.reason)}</div>`}
     </div>`;
   }).join('');
 
-  document.getElementById('evidence-list').innerHTML = `
-    <div class="ev-row"><div class="k">payment_mode</div><div class="v">${receipt.payment_mode}</div></div>
-    <div class="ev-row"><div class="k">network</div><div class="v">${receipt.network}</div></div>
-    <div class="ev-row"><div class="k">amount</div><div class="v">${receipt.amount_paid_usdc} USDC</div></div>
-    <div class="ev-row"><div class="k">tx / ref</div><div class="v">${receipt.tx_ref}</div></div>
-    <div class="ev-row"><div class="k">verify</div><div class="v">${receipt.verify_is_valid}</div></div>
-    <div class="ev-row"><div class="k">settle</div><div class="v">${receipt.settle_success}</div></div>
-    <div class="ev-row"><div class="k">unlock</div><div class="v">HTTP 200</div></div>`;
-
-  document.getElementById('seller-kv').innerHTML = `
-    <div class="k">payTo</div><div class="v">${receipt.seller_address}</div>
-    <div class="k">payer</div><div class="v">${receipt.payer}</div>
-    <div class="k">amount</div><div class="v">${receipt.amount_paid_usdc} USDC</div>
-    <div class="k">tx / ref</div><div class="v">${receipt.tx_ref}</div>`;
-  document.getElementById('seller-limitation').textContent = receipt.limitations[0];
+  document.getElementById('tx-line').innerHTML = `tx/ref: ${shortTx} — <a href="proof.html">full proof →</a>`;
 }
 render();
 </script>
