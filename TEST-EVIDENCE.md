@@ -30,3 +30,18 @@ Evidence classification: LIVE, not LOCAL_STUB, not SIMULATED.
 - No mainnet settlement
 - No production reliability claim
 - No dashboard or UI claim
+
+## Seller-side settlement receipt
+
+A final repeat V3 run captured a sanitized seller-side receipt from the unmodified seller logs.
+
+- payment_mode: LIVE_GATEWAY
+- network: eip155:5042002
+- selected source: S1
+- seller/payTo: 0x9252470F6237E16d087E0e39B121B3e770Ea1972
+- amount paid: 0.001 USDC
+- tx/ref: f1983b38-e27e-4126-8ed1-69e76927d25d
+- verify_is_valid: true
+- settle_success: true
+
+Limitation: this receipt does not claim a measured before/after seller balance delta. It proves seller-side payTo, verification, settlement success, payer, amount, and tx/ref from the real seller log.

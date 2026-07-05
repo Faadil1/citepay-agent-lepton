@@ -73,3 +73,15 @@ Latest V3 proof:
 query → computed relevance → selected/rejected sources → live payment ref → final paid citation
 
 It does not trigger browser payments and does not modify the live Gateway flow.
+
+## Seller-side receipt
+
+A repeat V3 run also captured a sanitized seller-side settlement receipt:
+
+- seller/payTo: `0x9252470F6237E16d087E0e39B121B3e770Ea1972`
+- tx/ref: `f1983b38-e27e-4126-8ed1-69e76927d25d`
+- verify: `true`
+- settle: `true`
+- amount: `0.001 USDC`
+
+This is not a balance-delta claim; it is a sanitized settlement receipt from the seller-side logs.
