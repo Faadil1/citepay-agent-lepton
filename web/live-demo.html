@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>CitePay Agent — Live Demo (LOCAL_DEMO_BACKEND)</title>
+<style>
+  :root { --bg:#0b0d10; --panel:#14171c; --line:#262b33; --text:#e6e8eb; --muted:#8a929e; --accent:#5eead4; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--text); font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; padding: 32px; line-height:1.5; max-width: 760px; }
+  h1 { font-size: 18px; margin: 0 0 8px; }
+  .badge { display:inline-block; background:#3a2f13; color:#f0c674; border:1px solid #6b551f; padding:4px 10px; border-radius:6px; font-size:12px; margin-bottom:20px; }
+  .note { color: var(--muted); font-size: 13px; background: var(--panel); border:1px solid var(--line); border-radius:6px; padding:14px 16px; margin-bottom: 16px; }
+  button { background: var(--accent); color:#00201b; border:none; padding:10px 18px; border-radius:6px; font-weight:600; cursor:pointer; font-family:inherit; }
+  button:disabled { opacity:0.5; cursor:not-allowed; }
+  pre { background: var(--panel); border:1px solid var(--line); border-radius:6px; padding:14px 16px; font-size:12px; white-space: pre-wrap; word-break: break-all; margin-top:16px; }
+  code { background: var(--panel); padding:1px 5px; border-radius:4px; }
+</style>
+</head>
+<body>
+<h1>CitePay Agent — Live Demo</h1>
+<div class="badge">LOCAL_DEMO_BACKEND</div>
+<div id="root"></div>
+
+<script>
+(function () {
+  const isLocal = ['localhost', '127.0.0.1'].includes(location.hostname);
+  const root = document.getElementById('root');
+  const BACKEND_URL = 'http://127.0.0.1:8787/api/run-demo';
+
+  if (!isLocal) {
+    root.innerHTML = `
+      <div class="note">
+        Run locally with <code>npm run demo:backend</code>.
+        This page does not trigger public browser payments.
+      </div>`;
+    return;
+  }
+
+  root.innerHTML = `
+    <div class="note">
+      This button calls a backend running on your own machine, which runs the
+      same live Arc Testnet payment flow already proven in this repo.
+      No private keys are ever sent to or stored in this browser — the
+      browser only ever calls a local HTTP endpoint and displays the
+      structured result.
+    </div>
+    <button id="runBtn">Run live demo</button>
+    <pre id="output">Idle. Backend must be running: npm run demo:backend</pre>
+  `;
+
+  const btn = document.getElementById('runBtn');
+  const out = document.getElementById('output');
+
+  btn.addEventListener('click', async () => {
+    btn.disabled = true;
+    out.textContent = 'Running... this triggers a real Arc Testnet payment, may take up to 45s.';
+    try {
+      const res = await fetch(BACKEND_URL, { method: 'POST' });
+      const data = await res.json();
+      out.textContent = JSON.stringify(data, null, 2);
+    } catch (err) {
+      out.textContent = 'Backend unreachable. Start it with: npm run demo:backend';
+    } finally {
+      btn.disabled = false;
+    }
+  });
+})();
+</script>
+</body>
+</html>

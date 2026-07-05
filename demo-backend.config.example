@@ -1,0 +1,7 @@
+# demo-backend.config.example
+# Copy relevant values into your existing .env.local (gitignored).
+# This backend introduces NO new secret variables — it reuses whatever
+# agent-v3.mjs / seller-v2.mjs already read from .env.local.
+
+# Optional: port for the local demo backend (default 8787)
+DEMO_BACKEND_PORT=8787
