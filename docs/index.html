@@ -4,439 +4,630 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>CitePay Agent — No pay, no cite.</title>
+<meta name="description" content="CitePay Agent proves that AI citations can be paid, verified, and settled on-chain. Only the paid source gets through — live testnet settlement via Circle Gateway x402 on Arc Testnet.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
+  /* =========================================================
+     DESIGN TOKENS
+  ========================================================= */
   :root {
-    --bg: #080A0D;
-    --bg-ledger: #0D1210;
-    --border: #1E2226;
-    --text: #EDEDEF;
-    --muted: #8A929E;
-
-    --gate-open: #C9FF3D;
-    --ledger-credit: #5FD98A;
-    --arc-blue: #69A7FF;
-    --gate-closed: #FF4D4D;
-    --ledger-debit: #E8846A;
-    --amber: #F2B84B;
-    --wax: #A6470C;
-
-    --paper: #F7F5F0;
-    --paper-2: #FAF8F3;
-    --ink: #161513;
-    --ink-muted: #6B685F;
-    --paper-border: #D8D2C4;
-
-    --font-display: "Space Grotesk", "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
-    --font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
-    --font-mono: "JetBrains Mono", "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    --bg:         #0A0B0D;
+    --bg-2:       #0F1012;
+    --bg-paper:   #F5F2EB;
+    --bg-paper-2: #EDE9DF;
+    --border:     #1C1E22;
+    --border-2:   #2A2D34;
+    --ink:        #18160F;
+    --ink-2:      #3B3830;
+    --ink-muted:  #7A7568;
+    --ink-rule:   #C8C2B4;
+    --open:       #B8FF3D;
+    --open-dim:   rgba(184,255,61,0.10);
+    --open-faint: rgba(184,255,61,0.045);
+    --closed:     #FF4444;
+    --closed-dim: rgba(255,68,68,0.10);
+    --amber:      #E9A825;
+    --amber-dim:  rgba(233,168,37,0.10);
+    --arc:        #5B9BF8;
+    --arc-dim:    rgba(91,155,248,0.10);
+    --text:       #ECEAE5;
+    --muted:      #777B85;
+    --muted-2:    #4A4E57;
+    --wax:        #C4521A;
+    --wax-dim:    rgba(196,82,26,0.12);
+    --serif:  'Playfair Display', 'Georgia', serif;
+    --mono:   'IBM Plex Mono', 'Menlo', monospace;
+    --sans:   'Inter', system-ui, sans-serif;
   }
-  * { box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; font-size: 16px; }
   body {
-    margin: 0; background: var(--bg); color: var(--text);
-    font-family: var(--font-body); line-height: 1.55; -webkit-font-smoothing: antialiased;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
   }
-  .wrap { max-width: 920px; margin: 0 auto; padding: 0 24px; }
-  section { padding: 64px 0; border-bottom: 1px solid var(--border); }
-  section:last-of-type { border-bottom: none; }
-  .eyebrow {
-    font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.12em;
-    text-transform: uppercase; color: var(--muted); margin: 0 0 16px;
+  ::selection { background: var(--open); color: var(--bg); }
+  .wrap { max-width: 960px; margin: 0 auto; padding: 0 28px; }
+  .rule-h { border: none; border-top: 1px solid var(--border); margin: 0; }
+
+  /* TOP BAND */
+  .top-band {
+    border-bottom: 1px solid var(--border);
+    padding: 12px 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
   }
-  h2.section-title {
-    font-family: var(--font-mono); font-size: 12px; text-transform: uppercase;
-    letter-spacing: 0.08em; color: var(--muted); margin: 0 0 28px;
+  .top-band .brand {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .top-band .network-pill {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 2px;
+    border: 1px solid var(--arc);
+    color: var(--arc);
   }
 
-  /* ============ HERO ============ */
-  .hero { padding: 72px 0 56px; }
-  h1 {
-    font-family: var(--font-display); font-weight: 700;
-    font-size: clamp(38px, 6.5vw, 64px); line-height: 1.02; letter-spacing: -0.02em;
-    margin: 0 0 18px; color: var(--text);
+  /* HERO */
+  .hero { padding: 80px 0 64px; }
+  .hero-eyebrow {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 22px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
   }
-  .hero .subline {
-    font-family: var(--font-display); font-size: 22px; font-weight: 500;
-    color: var(--arc-blue); margin: 0 0 22px;
+  .hero-eyebrow::before {
+    content: '';
+    display: inline-block;
+    width: 28px;
+    height: 1px;
+    background: var(--muted);
   }
-  .hero .tension {
-    font-size: 16px; color: var(--muted); max-width: 620px; margin: 0 0 14px;
+  h1.headline {
+    font-family: var(--serif);
+    font-weight: 900;
+    font-size: clamp(52px, 8vw, 88px);
+    line-height: 1.0;
+    letter-spacing: -0.01em;
+    color: var(--text);
+    margin-bottom: 24px;
   }
-  .hero .support {
-    font-size: 15px; color: var(--muted); max-width: 620px; margin: 0 0 32px;
+  h1.headline em { font-style: italic; color: var(--open); }
+  .subline {
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--text);
+    margin-bottom: 14px;
+    max-width: 600px;
+    line-height: 1.45;
   }
-  .cta-gate {
-    display: inline-flex; align-items: center; gap: 8px;
-    background: transparent; border: 1px solid var(--gate-open); color: var(--gate-open);
-    font-family: var(--font-mono); font-size: 13px; font-weight: 600;
-    padding: 12px 18px; border-radius: 4px; text-decoration: none; letter-spacing: 0.04em;
+  .hero-body {
+    font-size: 15px;
+    color: var(--muted);
+    max-width: 580px;
+    line-height: 1.7;
+    margin-bottom: 36px;
   }
-  .cta-gate:hover { background: rgba(201,255,61,0.08); }
-
-  /* ============ PROOF CHIPS ============ */
-  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chips-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 36px; }
   .chip {
-    font-family: var(--font-mono); font-size: 11px; padding: 6px 11px;
-    border-radius: 3px; border: 1px solid var(--border); color: var(--muted);
-    letter-spacing: 0.03em;
+    font-family: var(--mono);
+    font-size: 10.5px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 5px 11px;
+    border-radius: 2px;
+    border: 1px solid;
   }
-  .chip.c-open { color: var(--gate-open); border-color: var(--gate-open); }
-  .chip.c-blue { color: var(--arc-blue); border-color: var(--arc-blue); }
-  .chip.c-amber { color: var(--amber); border-color: var(--amber); }
+  .chip-open  { color: var(--open);  border-color: var(--open);  background: var(--open-faint); }
+  .chip-arc   { color: var(--arc);   border-color: var(--arc);   background: var(--arc-dim); }
+  .chip-amber { color: var(--amber); border-color: var(--amber); background: var(--amber-dim); }
+  .hero-anchor {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--open);
+    border: 1px solid var(--open);
+    padding: 11px 20px;
+    border-radius: 2px;
+    transition: background 0.15s;
+  }
+  .hero-anchor:hover { background: var(--open-dim); }
 
-  /* ============ GATE MATRIX ============ */
-  .gate-matrix { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-  .lane {
-    border: 1px solid var(--border); border-radius: 4px; padding: 22px 18px;
-    background: linear-gradient(180deg, rgba(255,255,255,0.015), transparent);
+  /* SECTION HEAD */
+  .sec-head { display: flex; align-items: baseline; gap: 16px; margin-bottom: 32px; }
+  .sec-num {
+    font-family: var(--mono); font-size: 10px; font-weight: 600;
+    letter-spacing: 0.12em; color: var(--muted-2); flex-shrink: 0;
   }
-  .lane.open { border-color: var(--gate-open); background: linear-gradient(180deg, rgba(201,255,61,0.06), transparent); }
-  .lane.closed { border-color: rgba(255,77,77,0.4); }
-  .gate-icon { width: 56px; height: 40px; margin-bottom: 14px; display: block; }
-  .gate-icon .post { fill: var(--muted); }
-  .lane.open .gate-icon .post { fill: var(--gate-open); }
-  .lane.closed .gate-icon .post { fill: var(--gate-closed); }
-  .gate-icon .arm {
-    fill: var(--gate-closed); transform-origin: 8px 8px; transform: rotate(0deg);
+  .sec-title {
+    font-family: var(--mono); font-size: 11px; font-weight: 600;
+    letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted);
   }
-  .lane.open .gate-icon .arm { fill: var(--gate-open); transform: rotate(-72deg); }
-  .lane-status {
-    font-family: var(--font-mono); font-size: 12px; font-weight: 700; letter-spacing: 0.05em;
-    margin-bottom: 6px;
-  }
-  .lane.open .lane-status { color: var(--gate-open); }
-  .lane.closed .lane-status { color: var(--gate-closed); }
-  .lane h3 { font-size: 15px; margin: 0 0 8px; color: var(--text); }
-  .lane .meta { font-size: 13px; color: var(--muted); margin-bottom: 4px; }
-  .lane .reason { font-size: 12px; color: var(--gate-closed); margin-top: 8px; }
-  .lane .txline { font-family: var(--font-mono); font-size: 11px; color: var(--arc-blue); margin-top: 10px; word-break: break-all; }
+  .sec-rule { flex: 1; height: 1px; background: var(--border); }
+  section.block { padding: 64px 0; border-bottom: 1px solid var(--border); }
+  section.block:last-of-type { border-bottom: none; }
 
-  /* ============ FLOW ============ */
-  .steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
-  .steps li {
-    border: 1px solid var(--border); border-radius: 4px; padding: 18px;
-    font-size: 14px; font-weight: 500; color: var(--text);
+  /* GATE MATRIX */
+  .gate-matrix {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
   }
-  .steps .num { display: block; font-family: var(--font-mono); color: var(--arc-blue); font-size: 11px; margin-bottom: 8px; }
+  .gate-lane {
+    background: var(--bg-2);
+    padding: 28px 22px 24px;
+    display: flex;
+    flex-direction: column;
+  }
+  .gate-lane.lane-open  { background: linear-gradient(180deg, rgba(184,255,61,0.06) 0%, var(--bg-2) 60%); }
+  .gate-lane.lane-closed{ background: linear-gradient(180deg, rgba(255,68,68,0.04) 0%, var(--bg-2) 60%); }
+  .gate-arm-wrap { margin-bottom: 18px; height: 52px; display: flex; align-items: flex-end; }
+  .gate-status {
+    font-family: var(--mono); font-size: 10px; font-weight: 700;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 3px 8px; border-radius: 2px; display: inline-block;
+    margin-bottom: 12px; align-self: flex-start;
+  }
+  .gs-open   { color: var(--bg); background: var(--open); }
+  .gs-closed { color: var(--closed); border: 1px solid var(--closed); background: var(--closed-dim); }
+  .gate-id { font-family: var(--mono); font-size: 22px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+  .gate-title { font-size: 13px; color: var(--muted); margin-bottom: 14px; line-height: 1.4; }
+  .gate-meta { font-family: var(--mono); font-size: 11.5px; color: var(--muted); margin-bottom: 6px; }
+  .gate-verdict {
+    font-family: var(--mono); font-size: 11px; font-weight: 700;
+    letter-spacing: 0.05em; margin-top: 10px; padding-top: 12px;
+    border-top: 1px solid var(--border-2);
+  }
+  .gv-open { color: var(--open); }
+  .gv-closed { color: var(--closed); }
+  .gate-txref { font-family: var(--mono); font-size: 10px; color: var(--arc); margin-top: 8px; word-break: break-all; line-height: 1.5; }
+  .gate-denial { font-family: var(--mono); font-size: 10.5px; color: var(--closed); margin-top: 6px; opacity: 0.8; }
 
-  /* ============ PAPER OBJECTS (invoice / receipt / notary) ============ */
-  .paper {
-    background: var(--paper); color: var(--ink); border-radius: 3px;
-    border: 1px solid var(--paper-border); padding: 30px;
+  /* PAPER INSERT */
+  .paper-insert {
+    background: var(--bg-paper);
+    border-radius: 3px;
+    border: 1px solid var(--ink-rule);
+    color: var(--ink);
+    overflow: hidden;
   }
-  .paper.alt { background: var(--paper-2); }
-  .paper .p-label {
-    font-family: var(--font-mono); font-size: 11px; text-transform: uppercase;
-    letter-spacing: 0.1em; color: var(--ink-muted); margin-bottom: 18px;
+  .paper-header {
+    padding: 18px 28px 14px;
+    border-bottom: 1px solid var(--ink-rule);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .paper-header .doc-type {
+    font-family: var(--mono); font-size: 10px; font-weight: 600;
+    letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-muted);
+  }
+  .paper-header .doc-ref { font-family: var(--mono); font-size: 10px; color: var(--ink-muted); }
+  .paper-body { padding: 24px 28px 28px; }
+
+  /* INVOICE */
+  .inv-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .inv-table th {
+    font-family: var(--mono); font-size: 9.5px; font-weight: 600;
+    letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-muted);
+    text-align: left; padding: 0 10px 12px 0; border-bottom: 1px solid var(--ink-rule);
+  }
+  .inv-table td { padding: 13px 10px 13px 0; border-bottom: 1px solid var(--ink-rule); vertical-align: top; color: var(--ink-2); }
+  .inv-table tr:last-child td { border-bottom: none; }
+  .inv-table td.td-mono { font-family: var(--mono); font-size: 12.5px; }
+  .inv-table td.td-id { font-family: var(--mono); font-size: 14px; font-weight: 700; color: var(--ink); }
+  .verdict-stamp {
+    display: inline-block; font-family: var(--mono); font-size: 9.5px; font-weight: 700;
+    letter-spacing: 0.07em; text-transform: uppercase; padding: 3px 8px; border-radius: 2px;
+  }
+  .vs-paid     { background: rgba(0,80,40,0.10); color: #1A6B3A; border: 1px solid rgba(0,100,50,0.25); }
+  .vs-declined { background: rgba(180,30,0,0.07); color: #A02020; border: 1px solid rgba(180,30,0,0.20); text-decoration: line-through; }
+  .decline-note { font-family: var(--mono); font-size: 10px; color: var(--ink-muted); margin-top: 4px; display: block; }
+
+  /* SLIP */
+  .slip-grid { display: grid; grid-template-columns: 160px 1fr; gap: 0; }
+  .slip-row { display: contents; }
+  .slip-row > div { padding: 10px 0; border-bottom: 1px solid var(--ink-rule); font-size: 13px; }
+  .slip-row:last-child > div { border-bottom: none; }
+  .slip-key {
+    font-family: var(--mono); font-size: 10px; font-weight: 600;
+    letter-spacing: 0.09em; text-transform: uppercase; color: var(--ink-muted);
+    padding-right: 12px; padding-top: 12px;
+  }
+  .slip-val { font-family: var(--mono); font-size: 12.5px; color: var(--ink); word-break: break-all; line-height: 1.5; }
+  .slip-val.v-open { color: #1A6B3A; font-weight: 700; }
+  .slip-val.v-arc  { color: #1A4B9A; }
+  .slip-val.v-true { color: #1A6B3A; }
+  .slip-stamp-row { margin-top: 20px; display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+  .receipt-stamp-text {
+    display: inline-block; font-family: var(--mono); font-size: 13px; font-weight: 700;
+    letter-spacing: 0.04em; color: #1A4B9A; border: 2px solid #1A4B9A;
+    padding: 6px 16px; border-radius: 3px; transform: rotate(-2.5deg); user-select: none;
   }
 
-  /* Invoice table */
-  .invoice-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
-  .invoice-table th, .invoice-table td {
-    text-align: left; padding: 12px 10px; border-bottom: 1px solid var(--paper-border);
-  }
-  .invoice-table th { font-family: var(--font-mono); font-size: 10.5px; text-transform: uppercase; color: var(--ink-muted); letter-spacing: 0.06em; }
-  .invoice-table td.mono { font-family: var(--font-mono); }
-  .stamp { font-family: var(--font-mono); font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 2px; }
-  .stamp.paid { color: #1E3A5F; background: rgba(30,58,95,0.08); border: 1px solid #1E3A5F; }
-  .stamp.declined { color: var(--wax); background: rgba(166,71,12,0.06); border: 1px solid var(--wax); text-decoration: line-through; }
-  .decline-reason { font-size: 11.5px; color: var(--ink-muted); margin-top: 2px; }
-
-  /* Receipt slip */
-  .receipt-slip { border-top: 3px dashed var(--paper-border); padding-top: 20px; margin-top: 4px; }
-  .receipt-kv { display: grid; grid-template-columns: 170px 1fr; gap: 9px 16px; font-size: 14px; }
-  .receipt-kv div:nth-child(odd) { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; color: var(--ink-muted); letter-spacing: 0.05em; padding-top: 2px; }
-  .receipt-kv div:nth-child(even) { font-family: var(--font-mono); word-break: break-all; }
-  .receipt-stamp {
-    display: inline-block; margin-top: 20px; font-family: var(--font-mono); font-weight: 700;
-    font-size: 13px; color: #1E3A5F; border: 2px solid #1E3A5F; padding: 6px 14px;
-    border-radius: 3px; transform: rotate(-3deg);
-  }
-
-  /* Notary receipt */
-  .notary-badge {
-    display: inline-block; font-family: var(--font-mono); font-size: 11.5px; font-weight: 700;
-    color: var(--wax); border: 1px solid var(--wax); padding: 5px 10px; border-radius: 3px;
-    margin-bottom: 20px; letter-spacing: 0.03em;
+  /* NOTARY */
+  .notary-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 20px; gap: 12px; flex-wrap: wrap; }
+  .notary-badge-pill {
+    display: inline-flex; align-items: center; gap: 7px;
+    font-family: var(--mono); font-size: 10.5px; font-weight: 700;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--wax); border: 1px solid var(--wax);
+    padding: 5px 12px; border-radius: 2px; background: var(--wax-dim);
   }
   .notary-seal {
-    float: right; width: 84px; height: 84px; border-radius: 50%;
-    border: 2px double var(--wax); display: flex; align-items: center; justify-content: center;
-    text-align: center; transform: rotate(-10deg); margin: -4px 0 12px 16px;
+    width: 82px; height: 82px; border-radius: 50%;
+    border: 2px double var(--wax); display: flex;
+    align-items: center; justify-content: center;
+    text-align: center; transform: rotate(-8deg); flex-shrink: 0;
   }
-  .notary-seal span {
-    font-family: var(--font-mono); font-size: 9px; font-weight: 700; color: var(--wax);
-    text-transform: uppercase; letter-spacing: 0.06em; line-height: 1.3;
-  }
-  .limitation-note {
-    clear: both; margin-top: 20px; padding: 14px 16px; border-left: 3px solid var(--amber);
-    background: rgba(242,184,75,0.06); font-size: 13.5px; color: var(--ink); line-height: 1.6;
-  }
+  .notary-seal-text { font-family: var(--mono); font-size: 8px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--wax); line-height: 1.4; }
+  .limitation-block { margin-top: 20px; padding: 14px 18px; border-left: 3px solid var(--amber); background: rgba(233,168,37,0.06); font-size: 13px; color: var(--ink-2); line-height: 1.65; border-radius: 0 2px 2px 0; }
+  .limitation-label { font-family: var(--mono); font-size: 9.5px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--amber); margin-bottom: 6px; }
 
-  /* ============ LEDGER ============ */
-  .ledger-wrap { background: var(--bg-ledger); border: 1px solid var(--border); border-radius: 4px; padding: 8px 24px; }
+  /* LEDGER */
+  .ledger-wrap { border: 1px solid var(--border); border-radius: 3px; overflow: hidden; }
+  .ledger-head {
+    display: grid; grid-template-columns: 180px 1fr 100px 120px;
+    gap: 0; padding: 10px 20px; background: var(--bg-2); border-bottom: 1px solid var(--border);
+  }
+  .ledger-head span { font-family: var(--mono); font-size: 9.5px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted-2); }
+  .ledger-head span:last-child, .ledger-head span:nth-child(3) { text-align: right; }
   .ledger-row {
-    display: grid; grid-template-columns: 1.4fr 2fr 1fr 1fr; gap: 12px;
-    padding: 14px 0; border-bottom: 1px solid var(--border); font-family: var(--font-mono); font-size: 13px;
+    display: grid; grid-template-columns: 180px 1fr 100px 120px;
+    gap: 0; padding: 14px 20px; border-bottom: 1px solid var(--border);
+    font-family: var(--mono); font-size: 12.5px;
   }
   .ledger-row:last-child { border-bottom: none; }
-  .ledger-row.head { color: var(--muted); font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.06em; }
-  .ledger-row .debit { color: var(--ledger-debit); text-align: right; }
-  .ledger-row .credit { color: var(--ledger-credit); text-align: right; }
-  .ledger-row .balance { color: var(--text); text-align: right; font-weight: 600; }
-  .ledger-row.total { border-top: 2px solid var(--border); border-bottom: none; padding-top: 16px; font-weight: 700; }
+  .ledger-row.lr-total { background: rgba(184,255,61,0.03); border-top: 1px solid var(--border-2); font-weight: 700; }
+  .lr-label { color: var(--text); }
+  .lr-desc  { color: var(--muted); font-size: 12px; }
+  .lr-debit { text-align: right; color: var(--closed); }
+  .lr-debit.zero { color: var(--muted-2); }
+  .lr-balance { text-align: right; color: var(--open); font-weight: 600; }
+  .lr-balance.neutral { color: var(--muted); font-weight: 400; }
 
-  /* ============ FINAL ANSWER ============ */
-  .answer-card {
-    border-left: 3px solid var(--gate-open); background: rgba(201,255,61,0.04);
-    padding: 24px 28px; font-size: 15px; border-radius: 0 4px 4px 0;
-  }
-  .answer-card .highlight { color: var(--gate-open); font-weight: 700; }
-  .answer-card .rule {
-    margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border);
-    font-family: var(--font-mono); font-size: 13px; color: var(--muted);
-  }
+  /* FINAL ANSWER */
+  .answer-block { border-left: 3px solid var(--open); background: var(--open-faint); padding: 26px 30px; border-radius: 0 3px 3px 0; }
+  .answer-query { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.09em; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; }
+  .answer-text { font-size: 16px; color: var(--text); line-height: 1.65; margin-bottom: 10px; }
+  .answer-citation { font-family: var(--serif); font-size: 20px; font-weight: 700; color: var(--open); margin: 14px 0 10px; }
+  .answer-rule { font-family: var(--mono); font-size: 11.5px; color: var(--muted); border-top: 1px solid var(--border); margin-top: 16px; padding-top: 14px; }
 
-  /* ============ SPONSOR / LIMITATIONS ============ */
-  .plain-list { list-style: none; margin: 0; padding: 0; }
-  .plain-list li { padding: 14px 0; border-bottom: 1px solid var(--border); font-size: 14.5px; color: var(--text); }
-  .plain-list li:last-child { border-bottom: none; }
-  .plain-list b { color: var(--arc-blue); }
-  .limitations-list li::before { content: "— "; color: var(--amber); }
+  /* BOUNDARY */
+  .boundary-intro { font-size: 14.5px; color: var(--muted); max-width: 640px; line-height: 1.7; margin-bottom: 32px; }
+  .boundary-list { list-style: none; display: flex; flex-direction: column; gap: 0; border: 1px solid var(--border); border-radius: 3px; overflow: hidden; }
+  .boundary-item { display: grid; grid-template-columns: 36px 1fr; gap: 0; border-bottom: 1px solid var(--border); }
+  .boundary-item:last-child { border-bottom: none; }
+  .bi-glyph { display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-size: 14px; border-right: 1px solid var(--border); background: var(--bg-2); padding: 16px 0; }
+  .bi-glyph.g-open  { color: var(--open); }
+  .bi-glyph.g-amber { color: var(--amber); }
+  .bi-glyph.g-muted { color: var(--muted-2); }
+  .bi-content { padding: 16px 20px; background: var(--bg); }
+  .bi-content.bc-green { background: rgba(184,255,61,0.025); }
+  .bi-content.bc-amber { background: rgba(233,168,37,0.02); }
+  .bi-label { font-family: var(--mono); font-size: 9.5px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 4px; }
+  .bi-label.l-open  { color: var(--open); }
+  .bi-label.l-amber { color: var(--amber); }
+  .bi-label.l-muted { color: var(--muted); }
+  .bi-title { font-size: 14.5px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+  .bi-body  { font-size: 13px; color: var(--muted); line-height: 1.6; }
 
+  /* FOOTER */
+  .page-footer { padding: 40px 0; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; border-top: 1px solid var(--border); }
+  .footer-note { font-family: var(--mono); font-size: 10.5px; color: var(--muted-2); letter-spacing: 0.05em; }
+  .footer-links { display: flex; gap: 10px; flex-wrap: wrap; }
+  .footer-link {
+    font-family: var(--mono); font-size: 11px; font-weight: 600;
+    letter-spacing: 0.07em; text-transform: uppercase; text-decoration: none;
+    color: var(--muted); border: 1px solid var(--border-2);
+    padding: 8px 16px; border-radius: 2px; transition: color 0.15s, border-color 0.15s;
+  }
+  .footer-link:hover { color: var(--arc); border-color: var(--arc); }
 
-  /* ============ EVIDENCE BOUNDARIES / LIMITATIONS ============ */
-  .boundary-intro {
-    max-width: 720px;
-    color: var(--muted);
-    font-size: 15px;
-    margin: -8px 0 28px;
-  }
-  .boundary-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 14px;
-  }
-  .boundary-card {
-    border: 1px solid var(--border);
-    background: rgba(255,255,255,0.018);
-    border-radius: 4px;
-    padding: 20px;
-  }
-  .boundary-card h3 {
-    margin: 10px 0 8px;
-    font-size: 16px;
-    color: var(--text);
-  }
-  .boundary-card p {
-    margin: 0;
-    color: var(--text);
-    font-size: 14px;
-    line-height: 1.6;
-  }
-  .boundary-badge {
-    display: inline-block;
-    font-family: var(--font-mono);
-    font-size: 10.5px;
-    letter-spacing: 0.08em;
-    color: var(--muted);
-    border: 1px solid var(--border);
-    padding: 4px 8px;
-    border-radius: 3px;
-  }
-  .boundary-badge.amber {
-    color: var(--amber);
-    border-color: var(--amber);
-  }
-  .boundary-badge.live {
-    color: var(--gate-open);
-    border-color: var(--gate-open);
-  }
-  .boundary-warning {
-    border-color: rgba(242,184,75,0.55);
-    background: rgba(242,184,75,0.035);
-  }
-  .boundary-final {
-    border-color: rgba(201,255,61,0.45);
-    background: rgba(201,255,61,0.035);
-  }
+  /* FADE-IN */
+  .fade-in { opacity: 0; transform: translateY(16px); transition: opacity 0.45s ease, transform 0.45s ease; }
+  .fade-in.visible { opacity: 1; transform: translateY(0); }
 
-  /* ============ LINKS ============ */
-  .links { display: flex; gap: 12px; flex-wrap: wrap; padding-bottom: 72px; }
-  .link-btn {
-    font-family: var(--font-mono); font-size: 13px; font-weight: 600; padding: 12px 18px;
-    border-radius: 4px; border: 1px solid var(--border); color: var(--text); text-decoration: none;
-  }
-  .link-btn:hover { border-color: var(--arc-blue); color: var(--arc-blue); }
-
+  /* RESPONSIVE */
   @media (max-width: 720px) {
+    h1.headline { font-size: 42px; }
     .gate-matrix { grid-template-columns: 1fr; }
-    .steps { grid-template-columns: 1fr; }
-    .invoice-table { font-size: 12px; }
-    .invoice-table th:nth-child(3), .invoice-table td:nth-child(3) { display: none; }
-    .receipt-kv { grid-template-columns: 1fr; }
-    .receipt-kv div:nth-child(even) { padding-bottom: 8px; }
-    .ledger-row { grid-template-columns: 1fr 1fr; row-gap: 4px; }
-    .ledger-row .debit, .ledger-row .credit, .ledger-row .balance { text-align: left; }
-    .notary-seal { float: none; margin: 0 0 16px; }
-    .boundary-grid { grid-template-columns: 1fr; }
+    .ledger-head, .ledger-row { grid-template-columns: 1fr 1fr; row-gap: 2px; }
+    .ledger-head span:nth-child(2), .ledger-row .lr-desc { display: none; }
+    .ledger-head span:last-child, .ledger-head span:nth-child(3) { text-align: left; }
+    .lr-debit, .lr-balance { text-align: left; }
+    .slip-grid { grid-template-columns: 1fr; }
+    .notary-seal { display: none; }
+    .inv-table th:nth-child(3), .inv-table td:nth-child(3) { display: none; }
+    .inv-table { font-size: 12px; }
   }
 </style>
 </head>
 <body>
+
 <div class="wrap">
 
-  <!-- 1. HERO -->
+  <!-- TOP BAND -->
+  <div class="top-band">
+    <span class="brand">CitePay Agent</span>
+    <span class="network-pill">Arc Testnet · eip155:5042002</span>
+  </div>
+
+  <!-- HERO -->
   <header class="hero">
-    <div class="eyebrow">CitePay Agent</div>
-    <h1>No pay, no cite.</h1>
+    <div class="hero-eyebrow">Hackathon proof · payment-gated citation</div>
+    <h1 class="headline">No <em>pay,</em><br>no cite.</h1>
     <p class="subline">Only the paid source gets through.</p>
-    <p class="tension">AI citations use someone's work for free. CitePay makes citation cost something and proves it.</p>
-    <p class="support">CitePay scores sources, rejects weak or expensive ones, pays the selected source through Circle Gateway on Arc Testnet, and cites only what it paid for.</p>
-    <a class="cta-gate" href="#gate-matrix">VIEW THE GATE →</a>
+    <p class="hero-body">
+      CitePay scores candidate sources, rejects weak or expensive ones,
+      pays the selected source through Circle Gateway x402 on Arc Testnet,
+      and cites only what it paid for. The proof is on this page.
+    </p>
+    <div class="chips-row" id="proof-chips">
+      <span class="chip chip-open">LIVE_GATEWAY PASS</span>
+      <span class="chip chip-arc">Arc Testnet</span>
+      <span class="chip chip-arc">Circle Gateway x402</span>
+      <span class="chip chip-open">0.001 USDC Paid</span>
+      <span class="chip chip-arc">HTTP 200 Unlock</span>
+      <span class="chip chip-amber">Seller-side receipt captured</span>
+    </div>
+    <a class="hero-anchor" href="#gate-matrix" id="view-gate-btn">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+        <path d="M7 1v12M1 7l6 6 6-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      VIEW THE GATE
+    </a>
   </header>
 
-  <!-- 2. PROOF CHIPS -->
-  <section>
-    <div class="chips">
-      <span class="chip c-open">LIVE_GATEWAY PASS</span>
-      <span class="chip c-blue">Arc Testnet</span>
-      <span class="chip c-blue">Circle Gateway x402</span>
-      <span class="chip c-open">0.001 USDC Paid</span>
-      <span class="chip c-blue">HTTP 200 Unlock</span>
-      <span class="chip c-amber">Seller-side receipt captured</span>
+  <hr class="rule-h">
+
+  <!-- §1 GATE MATRIX -->
+  <section class="block" id="gate-matrix">
+    <div class="sec-head">
+      <span class="sec-num">§ 01</span>
+      <span class="sec-title">Judge moment — the gate</span>
+      <div class="sec-rule"></div>
     </div>
+    <div class="gate-matrix fade-in" id="gate-lanes"></div>
   </section>
 
-  <!-- 3. GATE MATRIX -->
-  <section id="gate-matrix">
-    <h2 class="section-title">Judge moment — the gate</h2>
-    <div class="gate-matrix" id="gate-lanes"></div>
-  </section>
-
-  <!-- 4. THREE-STEP FLOW -->
-  <section>
-    <h2 class="section-title">How it works</h2>
-    <ol class="steps">
-      <li><span class="num">01</span>Evaluate sources</li>
-      <li><span class="num">02</span>Pay selected source</li>
-      <li><span class="num">03</span>Cite only the paid source</li>
-    </ol>
-  </section>
-
-  <!-- 5. CANDIDATE INVOICE TABLE -->
-  <section>
-    <h2 class="section-title">Candidate economics</h2>
-    <div class="paper">
-      <div class="p-label">Invoice — Source Evaluation</div>
-      <table class="invoice-table">
-        <thead>
-          <tr><th>Source</th><th>Description</th><th>Price</th><th>Relevance/Ratio</th><th>Status</th></tr>
-        </thead>
-        <tbody id="invoice-rows"></tbody>
-      </table>
+  <!-- §2 CANDIDATE INVOICE -->
+  <section class="block">
+    <div class="sec-head fade-in">
+      <span class="sec-num">§ 02</span>
+      <span class="sec-title">Research invoice — candidate economics</span>
+      <div class="sec-rule"></div>
     </div>
-  </section>
-
-  <!-- 6. PAYMENT RECEIPT SLIP -->
-  <section>
-    <h2 class="section-title">Payment receipt</h2>
-    <div class="paper alt">
-      <div class="p-label">Settlement Slip</div>
-      <div class="receipt-slip">
-        <div class="receipt-kv" id="payment-kv"></div>
-        <div class="receipt-stamp" id="payment-stamp"></div>
+    <div class="paper-insert fade-in">
+      <div class="paper-header">
+        <span class="doc-type">Invoice — Source Evaluation</span>
+        <span class="doc-ref">Budget: 0.005 USDC</span>
+      </div>
+      <div class="paper-body">
+        <table class="inv-table">
+          <thead>
+            <tr>
+              <th>ID</th><th>Source</th><th>Price</th><th>Rel / Ratio</th><th>Verdict</th>
+            </tr>
+          </thead>
+          <tbody id="invoice-rows"></tbody>
+        </table>
       </div>
     </div>
   </section>
 
-  <!-- 7. SELLER-SIDE NOTARY RECEIPT -->
-  <section>
-    <h2 class="section-title">Seller-side receipt</h2>
-    <div class="paper">
-      <div class="notary-seal"><span>WITNESSED<br>HONEST<br>LIMITATION</span></div>
-      <div class="notary-badge" id="notary-badge">PASS_WITH_HONEST_LIMITATION</div>
-      <div class="receipt-kv" id="seller-kv"></div>
-      <div class="limitation-note" id="seller-limitation"></div>
+  <!-- §3 PAYMENT RECEIPT -->
+  <section class="block">
+    <div class="sec-head fade-in">
+      <span class="sec-num">§ 03</span>
+      <span class="sec-title">Settlement slip — payment receipt</span>
+      <div class="sec-rule"></div>
+    </div>
+    <div class="paper-insert fade-in">
+      <div class="paper-header">
+        <span class="doc-type">Settlement Slip · Circle Gateway x402</span>
+        <span class="doc-ref">LIVE PAYMENT — TESTNET</span>
+      </div>
+      <div class="paper-body">
+        <div class="slip-grid" id="payment-slip"></div>
+        <div class="slip-stamp-row">
+          <span class="receipt-stamp-text" id="payment-stamp"></span>
+        </div>
+      </div>
     </div>
   </section>
 
-  <!-- 8. AGENT LEDGER -->
-  <section>
-    <h2 class="section-title">Agent ledger — budget trace</h2>
-    <div class="ledger-wrap">
-      <div class="ledger-row head"><div>Entry</div><div>Description</div><div style="text-align:right">Debit</div><div style="text-align:right">Balance</div></div>
+  <!-- §4 SELLER-SIDE NOTARY RECEIPT -->
+  <section class="block">
+    <div class="sec-head fade-in">
+      <span class="sec-num">§ 04</span>
+      <span class="sec-title">Seller-side notary receipt</span>
+      <div class="sec-rule"></div>
+    </div>
+    <div class="paper-insert fade-in">
+      <div class="paper-header">
+        <span class="doc-type">Seller-Side Receipt · Witnessed</span>
+        <span class="doc-ref">captured from real seller logs</span>
+      </div>
+      <div class="paper-body">
+        <div class="notary-top">
+          <div class="notary-badge-pill" id="notary-badge">
+            <span>●</span><span>PASS_WITH_HONEST_LIMITATION</span>
+          </div>
+          <div class="notary-seal" aria-hidden="true">
+            <span class="notary-seal-text">WITNESSED<br>HONEST<br>LIMIT.</span>
+          </div>
+        </div>
+        <div class="slip-grid" id="seller-slip"></div>
+        <div class="limitation-block" id="seller-limitation">
+          <div class="limitation-label">Honest Limitation</div>
+          <div id="seller-limitation-text"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- §5 AGENT LEDGER -->
+  <section class="block">
+    <div class="sec-head fade-in">
+      <span class="sec-num">§ 05</span>
+      <span class="sec-title">Agent ledger — budget trace</span>
+      <div class="sec-rule"></div>
+    </div>
+    <div class="ledger-wrap fade-in">
+      <div class="ledger-head">
+        <span>Entry</span>
+        <span>Description</span>
+        <span style="text-align:right">Debit</span>
+        <span style="text-align:right">Balance</span>
+      </div>
       <div id="ledger-rows"></div>
     </div>
   </section>
 
-  <!-- 9. FINAL ANSWER -->
-  <section>
-    <h2 class="section-title">Final answer</h2>
-    <div class="answer-card" id="final-answer"></div>
+  <!-- §6 FINAL ANSWER -->
+  <section class="block">
+    <div class="sec-head fade-in">
+      <span class="sec-num">§ 06</span>
+      <span class="sec-title">Final answer</span>
+      <div class="sec-rule"></div>
+    </div>
+    <div class="answer-block fade-in" id="final-answer"></div>
   </section>
 
-  <!-- 10. SPONSOR RELEVANCE -->
-  <section>
-    <h2 class="section-title">Sponsor relevance</h2>
-    <ul class="plain-list">
-      <li><b>Circle Gateway</b> — x402 payment and settlement path</li>
-      <li><b>Arc Testnet</b> — settlement network</li>
-      <li><b>USDC</b> — stable nanopayment unit</li>
+  <!-- §7 EVIDENCE BOUNDARIES -->
+  <section class="block">
+    <div class="sec-head fade-in">
+      <span class="sec-num">§ 07</span>
+      <span class="sec-title">What this proves — and what it does not claim</span>
+      <div class="sec-rule"></div>
+    </div>
+    <p class="boundary-intro fade-in">
+      CitePay is intentionally strict about evidence labels.
+      <strong style="color:var(--text)">LIVE</strong> means live testnet settlement.
+      Anything not directly proven is stated as a limitation, and the repo includes an automated boundary check.
+    </p>
+    <ul class="boundary-list fade-in">
+      <li class="boundary-item">
+        <div class="bi-glyph g-muted">◆</div>
+        <div class="bi-content">
+          <div class="bi-label l-muted">SCOPE</div>
+          <div class="bi-title">Testnet only</div>
+          <div class="bi-body">This demo proves live settlement on Arc Testnet. It does not claim mainnet settlement.</div>
+        </div>
+      </li>
+      <li class="boundary-item">
+        <div class="bi-glyph g-muted">◆</div>
+        <div class="bi-content">
+          <div class="bi-label l-muted">SAFETY</div>
+          <div class="bi-title">No browser-based live payment</div>
+          <div class="bi-body">The browser page is a proof viewer. It does not trigger live payments from the browser.</div>
+        </div>
+      </li>
+      <li class="boundary-item">
+        <div class="bi-glyph g-amber">▲</div>
+        <div class="bi-content bc-amber">
+          <div class="bi-label l-amber">HONEST LIMITATION</div>
+          <div class="bi-title">Seller-side receipt is sanitized</div>
+          <div class="bi-body">The seller-side receipt proves payTo, payer, amount, tx/ref, verify=true, and settle=true from real seller logs. It does not claim a measured seller balance delta.</div>
+        </div>
+      </li>
+      <li class="boundary-item">
+        <div class="bi-glyph g-muted">◆</div>
+        <div class="bi-content">
+          <div class="bi-label l-muted">MATURITY</div>
+          <div class="bi-title">No production reliability claim</div>
+          <div class="bi-body">This is a hackathon proof of the payment-gated citation flow, not a production reliability claim.</div>
+        </div>
+      </li>
+      <li class="boundary-item">
+        <div class="bi-glyph g-open">✓</div>
+        <div class="bi-content bc-green">
+          <div class="bi-label l-open">BOUNDARY CHECK PASS</div>
+          <div class="bi-title">Evidence boundaries enforced</div>
+          <div class="bi-body">Automated check passed: LIVE_GATEWAY on Arc Testnet, proof-viewer-only browser page, sanitized seller receipt, and no positive mainnet or production reliability overclaim.</div>
+        </div>
+      </li>
     </ul>
   </section>
 
-  <!-- 11. HONEST LIMITATIONS -->
-  <section>
-    <h2 class="section-title">What this proves — and what it does not claim</h2>
-    <p class="boundary-intro">
-      CitePay is intentionally strict about evidence labels. LIVE means live testnet settlement.
-      Anything not directly proven is stated as a limitation, and the repo now includes an automated boundary check.
-    </p>
-
-    <div class="boundary-grid">
-      <article class="boundary-card">
-        <span class="boundary-badge">SCOPE</span>
-        <h3>Testnet only</h3>
-        <p>This demo proves live settlement on Arc Testnet. It does not claim mainnet settlement.</p>
-      </article>
-
-      <article class="boundary-card">
-        <span class="boundary-badge">SAFETY</span>
-        <h3>No browser live payment</h3>
-        <p>The browser page is a proof viewer. It does not trigger live payments from the browser.</p>
-      </article>
-
-      <article class="boundary-card boundary-warning">
-        <span class="boundary-badge amber">HONEST LIMITATION</span>
-        <h3>Seller-side receipt is sanitized</h3>
-        <p>The seller-side receipt proves payTo, payer, amount, tx/ref, verify=true, and settle=true from real seller logs. It does not claim a measured seller balance delta.</p>
-      </article>
-
-      <article class="boundary-card">
-        <span class="boundary-badge">MATURITY</span>
-        <h3>No production reliability claim</h3>
-        <p>This is a hackathon proof of the payment-gated citation flow, not a production reliability claim.</p>
-      </article>
-
-      <article class="boundary-card boundary-final">
-        <span class="boundary-badge live">BOUNDARY CHECK PASS</span>
-        <h3>Evidence boundaries enforced</h3>
-        <p>Automated check passed: LIVE_GATEWAY on Arc Testnet, proof-viewer-only browser page, sanitized seller receipt, and no positive mainnet or production reliability overclaim.</p>
-      </article>
+  <!-- §8 SPONSOR RELEVANCE -->
+  <section class="block">
+    <div class="sec-head fade-in">
+      <span class="sec-num">§ 08</span>
+      <span class="sec-title">Sponsor relevance</span>
+      <div class="sec-rule"></div>
     </div>
+    <ul class="boundary-list fade-in">
+      <li class="boundary-item">
+        <div class="bi-glyph g-muted" style="font-size:10px">●</div>
+        <div class="bi-content">
+          <div class="bi-title" style="font-size:14px">Circle Gateway</div>
+          <div class="bi-body">x402 payment and settlement path used for every source payment decision</div>
+        </div>
+      </li>
+      <li class="boundary-item">
+        <div class="bi-glyph g-muted" style="font-size:10px">●</div>
+        <div class="bi-content">
+          <div class="bi-title" style="font-size:14px">Arc Testnet</div>
+          <div class="bi-body">Settlement network — eip155:5042002 — all live payments run here</div>
+        </div>
+      </li>
+      <li class="boundary-item">
+        <div class="bi-glyph g-muted" style="font-size:10px">●</div>
+        <div class="bi-content">
+          <div class="bi-title" style="font-size:14px">USDC</div>
+          <div class="bi-body">Stable nanopayment unit — 0.001 USDC per citation, proven on-chain</div>
+        </div>
+      </li>
+    </ul>
   </section>
 
-
-  <!-- 12. LINKS -->
-  <footer class="links">
-    <a class="link-btn" href="https://github.com/Faadil1/citepay-agent-lepton">VIEW REPO</a>
-    <a class="link-btn" href="#">WATCH DEMO</a>
+  <!-- FOOTER -->
+  <footer class="page-footer">
+    <span class="footer-note">CitePay Agent · Hackathon proof · Arc Testnet · No mainnet claim</span>
+    <div class="footer-links">
+      <a class="footer-link" href="https://github.com/Faadil1/citepay-agent-lepton" id="repo-link">VIEW REPO</a>
+      <a class="footer-link" href="#" id="demo-link">WATCH DEMO</a>
+    </div>
   </footer>
 
-</div>
+</div><!-- /wrap -->
 
-<!-- Real embedded evidence — unmodified from evidence/live-gateway-evidence-v3.json -->
+<!-- EMBEDDED EVIDENCE — unmodified from evidence/live-gateway-evidence-v3.json -->
 <script id="evidence-v3" type="application/json">
 {
   "query": "How can AI agents compensate creators for cited evidence?",
@@ -451,7 +642,7 @@
 }
 </script>
 
-<!-- Real embedded evidence — unmodified from evidence/settlement-receiving-proof.json -->
+<!-- EMBEDDED EVIDENCE — unmodified from evidence/settlement-receiving-proof.json -->
 <script id="seller-receipt-data" type="application/json">
 {
   "payment_mode": "LIVE_GATEWAY",
@@ -470,92 +661,134 @@
 </script>
 
 <script>
-function render() {
-  const v3 = JSON.parse(document.getElementById('evidence-v3').textContent);
-  const receipt = JSON.parse(document.getElementById('seller-receipt-data').textContent);
-  const reasonLabel = r => r === 'over_budget' ? 'OVER BUDGET' : 'LOWER RELEVANCE/PRICE';
+(function render() {
+  var v3      = JSON.parse(document.getElementById('evidence-v3').textContent);
+  var receipt = JSON.parse(document.getElementById('seller-receipt-data').textContent);
 
-  // Gate matrix
-  const lanes = document.getElementById('gate-lanes');
-  lanes.innerHTML = v3.candidates.map(c => {
-    const isOpen = c.id === v3.selected_source_id;
-    return `<div class="lane ${isOpen ? 'open' : 'closed'}">
-      <svg class="gate-icon" viewBox="0 0 60 40">
-        <rect class="post" x="4" y="4" width="6" height="32" rx="1"/>
-        <rect class="post" x="50" y="4" width="6" height="32" rx="1"/>
-        <rect class="arm" x="8" y="4" width="46" height="6" rx="1"/>
-      </svg>
-      <div class="lane-status">${isOpen ? 'OPEN GATE' : 'CLOSED GATE'}</div>
-      <h3>${c.id} — ${c.title}</h3>
-      <div class="meta">${c.price} USDC · ratio ${c.ratio}</div>
-      ${isOpen
-        ? `<div class="meta" style="color:var(--gate-open)">PAID · CITED</div><div class="txline">tx/ref: ${receipt.tx_ref}</div>`
-        : `<div class="meta" style="color:var(--gate-closed)">NOT PAID · NOT CITED</div><div class="reason">DENIED — ${reasonLabel(c.reason)}</div>`}
-    </div>`;
+  function reasonLabel(r) {
+    return r === 'over_budget' ? 'OVER BUDGET' : 'LOWER RELEVANCE / PRICE';
+  }
+
+  function gateArmSVG(isOpen) {
+    var postFill = isOpen ? 'var(--open)' : 'var(--closed)';
+    var armFill  = isOpen ? 'var(--open)' : 'var(--closed)';
+    var armRotate = isOpen ? 'rotate(-70, 11, 12)' : '';
+    return '<svg width="64" height="52" viewBox="0 0 64 52" fill="none">' +
+      '<rect x="6" y="10" width="7" height="38" rx="1" fill="' + postFill + '" opacity="0.8"/>' +
+      '<rect x="51" y="10" width="7" height="38" rx="1" fill="' + postFill + '" opacity="0.35"/>' +
+      '<rect x="11" y="9" width="46" height="6" rx="1" fill="' + armFill + '"' +
+        (isOpen ? ' transform="rotate(-70, 11, 12)"' : '') + '/>' +
+      '<line x1="0" y1="50" x2="64" y2="50" stroke="' + postFill + '" stroke-width="1" opacity="0.25"/>' +
+      '</svg>';
+  }
+
+  /* §1 Gate matrix */
+  var lanes = document.getElementById('gate-lanes');
+  lanes.innerHTML = v3.candidates.map(function(c) {
+    var isOpen = c.id === v3.selected_source_id;
+    var verdictHtml = isOpen
+      ? '<div class="gate-verdict gv-open">PAID · CITED</div>' +
+        '<div class="gate-txref">tx/ref: ' + receipt.tx_ref + '</div>'
+      : '<div class="gate-verdict gv-closed">NOT PAID · NOT CITED</div>' +
+        '<div class="gate-denial">&#8627; ' + reasonLabel(c.reason) + '</div>';
+    return '<div class="gate-lane ' + (isOpen ? 'lane-open' : 'lane-closed') + '">' +
+      '<div class="gate-arm-wrap">' + gateArmSVG(isOpen) + '</div>' +
+      '<span class="gate-status ' + (isOpen ? 'gs-open' : 'gs-closed') + '">' + (isOpen ? 'OPEN · PAID · CITED' : 'CLOSED · NOT PAID · NOT CITED') + '</span>' +
+      '<div class="gate-id">' + c.id + '</div>' +
+      '<div class="gate-title">' + c.title + '</div>' +
+      '<div class="gate-meta">' + c.price + ' USDC · ratio ' + c.ratio + '</div>' +
+      verdictHtml +
+      '</div>';
   }).join('');
 
-  // Invoice table
-  document.getElementById('invoice-rows').innerHTML = v3.candidates.map(c => {
-    const isPaid = c.id === v3.selected_source_id;
-    return `<tr>
-      <td><b>${c.id}</b></td>
-      <td>${c.title}</td>
-      <td class="mono">${c.price} USDC</td>
-      <td class="mono">${c.ratio}</td>
-      <td>${isPaid
-        ? '<span class="stamp paid">PAID</span>'
-        : `<span class="stamp declined">DECLINED</span><div class="decline-reason">${reasonLabel(c.reason)}</div>`}
-      </td>
-    </tr>`;
+  /* §2 Invoice */
+  document.getElementById('invoice-rows').innerHTML = v3.candidates.map(function(c) {
+    var isPaid = c.id === v3.selected_source_id;
+    var v = isPaid
+      ? '<span class="verdict-stamp vs-paid">PAID</span>'
+      : '<span class="verdict-stamp vs-declined">DECLINED</span><span class="decline-note">' + reasonLabel(c.reason) + '</span>';
+    return '<tr>' +
+      '<td class="td-id">' + c.id + '</td>' +
+      '<td>' + c.title + '</td>' +
+      '<td class="td-mono">' + c.price + ' USDC</td>' +
+      '<td class="td-mono">' + c.ratio + '</td>' +
+      '<td>' + v + '</td></tr>';
   }).join('');
 
-  // Payment receipt
-  document.getElementById('payment-kv').innerHTML = `
-    <div>payment_mode</div><div>${receipt.payment_mode}</div>
-    <div>network</div><div>${receipt.network}</div>
-    <div>amount</div><div>${receipt.amount_paid_usdc} USDC</div>
-    <div>tx / ref</div><div>${receipt.tx_ref}</div>
-    <div>verify</div><div>${receipt.verify_is_valid}</div>
-    <div>settle</div><div>${receipt.settle_success}</div>
-    <div>unlock</div><div>HTTP 200</div>`;
+  /* §3 Payment slip */
+  var payRows = [
+    { key: 'payment_mode', val: receipt.payment_mode,                 cls: 'v-open' },
+    { key: 'network',      val: receipt.network,                      cls: 'v-arc'  },
+    { key: 'amount',       val: receipt.amount_paid_usdc + ' USDC',   cls: ''       },
+    { key: 'tx / ref',     val: receipt.tx_ref,                       cls: ''       },
+    { key: 'verify',       val: String(receipt.verify_is_valid),      cls: 'v-true' },
+    { key: 'settle',       val: String(receipt.settle_success),       cls: 'v-true' },
+    { key: 'unlock',       val: 'HTTP 200',                           cls: 'v-true' }
+  ];
+  document.getElementById('payment-slip').innerHTML = payRows.map(function(r) {
+    return '<div class="slip-row"><div class="slip-key">' + r.key + '</div><div class="slip-val ' + r.cls + '">' + r.val + '</div></div>';
+  }).join('');
   document.getElementById('payment-stamp').textContent = 'SETTLED — LIVE_GATEWAY';
 
-  // Seller-side notary receipt
-  document.getElementById('seller-kv').innerHTML = `
-    <div>seller / payTo</div><div>${receipt.seller_address}</div>
-    <div>payer</div><div>${receipt.payer}</div>
-    <div>amount</div><div>${receipt.amount_paid_usdc} USDC</div>
-    <div>tx / ref</div><div>${receipt.tx_ref}</div>`;
-  document.getElementById('seller-limitation').textContent = receipt.limitations[0];
-
-  // Ledger
-  const rows = [
-    { label: 'OPENING BUDGET', desc: '—', debit: '', balance: v3.budget_before_after.before.toFixed(3) },
-    { label: 'S2 — REJECTED', desc: 'Over budget, never paid', debit: '0.000', balance: v3.budget_before_after.before.toFixed(3) },
-    { label: 'S3 — REJECTED', desc: 'Lower relevance/price, never paid', debit: '0.000', balance: v3.budget_before_after.before.toFixed(3) },
-    { label: 'S1 — PAID', desc: 'Live Gateway settlement, Arc Testnet', debit: '-0.001', balance: v3.budget_before_after.after.toFixed(3) }
+  /* §4 Seller receipt */
+  var sellRows = [
+    { key: 'seller / payTo', val: receipt.seller_address },
+    { key: 'payer',          val: receipt.payer },
+    { key: 'amount',         val: receipt.amount_paid_usdc + ' USDC' },
+    { key: 'tx / ref',       val: receipt.tx_ref }
   ];
-  document.getElementById('ledger-rows').innerHTML = rows.map((r, i) => `
-    <div class="ledger-row ${i === rows.length - 1 ? 'total' : ''}">
-      <div>${r.label}</div>
-      <div style="color:var(--muted)">${r.desc}</div>
-      <div class="${r.debit.startsWith('-') ? 'debit' : ''}">${r.debit}</div>
-      <div class="balance">${r.balance} USDC</div>
-    </div>`).join('') +
-    `<div class="ledger-row total">
-      <div>REMAINING BUDGET</div><div></div><div></div>
-      <div class="balance">${v3.budget_before_after.after.toFixed(3)} USDC</div>
-    </div>`;
+  document.getElementById('seller-slip').innerHTML = sellRows.map(function(r) {
+    return '<div class="slip-row"><div class="slip-key">' + r.key + '</div><div class="slip-val">' + r.val + '</div></div>';
+  }).join('');
+  document.getElementById('seller-limitation-text').textContent = receipt.limitations[0];
 
-  // Final answer
-  const selected = v3.candidates.find(c => c.id === v3.selected_source_id);
-  document.getElementById('final-answer').innerHTML = `
-    <p>CitePay selected S1 because it had the strongest computed relevance/price ratio (${selected.ratio}) for the query "${v3.query}".</p>
-    <p class="highlight">Citation: [S1] only.</p>
-    <p>Rejected sources cited: none.</p>
-    <div class="rule">No Gateway settlement → no unlock → no citation.</div>`;
-}
-render();
+  /* §5 Ledger */
+  var ledgerRows = [
+    { label: 'OPENING BUDGET', desc: '—',                                     debit: '',       bal: v3.budget_before_after.before, total: false },
+    { label: 'S2 — REJECTED',  desc: 'Over budget, never paid',               debit: '0.000',  bal: v3.budget_before_after.before, total: false },
+    { label: 'S3 — REJECTED',  desc: 'Lower relevance/price, never paid',     debit: '0.000',  bal: v3.budget_before_after.before, total: false },
+    { label: 'S1 — PAID',      desc: 'Live Gateway settlement, Arc Testnet',  debit: '-0.001', bal: v3.budget_before_after.after,  total: false },
+    { label: 'REMAINING BUDGET', desc: '',                                     debit: '',       bal: v3.budget_before_after.after,  total: true  }
+  ];
+  document.getElementById('ledger-rows').innerHTML = ledgerRows.map(function(r) {
+    var balClass = r.total ? 'lr-balance' : (r.debit === '' ? 'lr-balance neutral' : 'lr-balance');
+    var debitClass = r.debit === '0.000' ? 'lr-debit zero' : 'lr-debit';
+    return '<div class="ledger-row' + (r.total ? ' lr-total' : '') + '">' +
+      '<div class="lr-label">' + r.label + '</div>' +
+      '<div class="lr-desc">' + r.desc + '</div>' +
+      '<div class="' + debitClass + '">' + r.debit + '</div>' +
+      '<div class="' + balClass + '">' + r.bal.toFixed(3) + ' USDC</div>' +
+      '</div>';
+  }).join('');
+
+  /* §6 Final answer */
+  var selected = v3.candidates.filter(function(c) { return c.id === v3.selected_source_id; })[0];
+  document.getElementById('final-answer').innerHTML =
+    '<div class="answer-query">Query</div>' +
+    '<div class="answer-text">&ldquo;' + v3.query + '&rdquo;</div>' +
+    '<div class="answer-citation">Citation: [S1] only.</div>' +
+    '<div class="answer-text" style="font-size:14px;color:var(--muted)">' +
+      'S1 selected &mdash; strongest relevance/price ratio (' + selected.ratio + '). ' +
+      'S2 rejected (over budget). S3 rejected (lower relevance/price ratio). ' +
+      'Rejected sources cited: <strong style="color:var(--text)">none.</strong>' +
+    '</div>' +
+    '<div class="answer-rule">No Gateway settlement &rarr; no unlock &rarr; no citation.</div>';
+})();
+
+/* Scroll fade-in */
+(function() {
+  var els = document.querySelectorAll('.fade-in');
+  if (!('IntersectionObserver' in window)) {
+    for (var i = 0; i < els.length; i++) els[i].classList.add('visible');
+    return;
+  }
+  var io = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) {
+      if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); }
+    });
+  }, { threshold: 0.08 });
+  for (var i = 0; i < els.length; i++) io.observe(els[i]);
+})();
 </script>
 </body>
 </html>
