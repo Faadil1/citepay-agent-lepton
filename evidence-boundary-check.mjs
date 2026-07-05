@@ -33,7 +33,7 @@ try {
 }
 
 // 2. Browser page must not trigger live payment
-const browserFiles = ["docs/index.html", "web/index.html"];
+const browserFiles = ["docs/index.html", "docs/proof.html", "web/index.html", "web/proof.html"];
 const forbiddenBrowserPatterns = [
   "BUYER_PRIVATE_KEY",
   "SELLER_PRIVATE_KEY",
@@ -144,7 +144,10 @@ const publicText = [
   read("README.md"),
   read("SUBMISSION.md"),
   read("TEST-EVIDENCE.md"),
-  read("docs/index.html")
+  read("docs/index.html"),
+  read("docs/proof.html"),
+  read("web/index.html"),
+  read("web/proof.html")
 ].join("\n").toLowerCase();
 
 const requiredPhrases = [
