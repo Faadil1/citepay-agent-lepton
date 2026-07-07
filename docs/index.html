@@ -6,16 +6,13 @@
 <title>CitePay Agent — No pay, no cite.</title>
 <style>
   :root {
-    --bg: #F6F3EC;
-    --ink: #1B1B18;
-    --muted: #6B6A63;
-    --hairline: #DDD8CB;
-    --panel: #15140F;
-    --panel-text: #F1EEE4;
-    --panel-muted: #9A968A;
-    --open: #3C7A5A;
-    --closed: #B4402A;
-    --limit: #A9752B;
+    --bg: #EAE6DB;
+    --ink: #1B1911;
+    --muted: #6E6A5C;
+    --hairline: #D6D0BF;
+    --open: #2E6B45;
+    --closed: #A8402C;
+    --limit: #8A5A22;
     --font-display: "Iowan Old Style", "Palatino Linotype", Georgia, serif;
     --font-body: "Inter", -apple-system, "Segoe UI", Roboto, sans-serif;
     --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
@@ -26,78 +23,96 @@
     font-family: var(--font-body); line-height: 1.5;
   }
   .wrap { max-width: 760px; margin: 0 auto; padding: 0 24px; }
-  section { padding: 44px 0; }
+  section { padding: 40px 0; border-bottom: 1px solid var(--hairline); }
+  section:last-of-type { border-bottom: none; }
   .eyebrow {
     font-family: var(--font-mono); font-size: 11px; text-transform: uppercase;
-    letter-spacing: 0.1em; color: var(--muted); margin: 0 0 16px;
+    letter-spacing: 0.1em; color: var(--muted); margin: 0 0 18px;
   }
 
   /* Hero */
-  .hero { padding: 56px 0 8px; border-bottom: 1px solid var(--hairline); }
+  .hero { padding: 56px 0 32px; }
   h1 {
     font-family: var(--font-display); font-weight: 400; font-style: normal;
     font-size: clamp(34px, 5.5vw, 50px); line-height: 1.08; letter-spacing: -0.01em;
     margin: 0 0 14px; color: var(--ink);
   }
-  .subline { font-size: 17px; color: var(--ink); max-width: 480px; margin: 0 0 6px; }
+  .subline { font-size: 17px; color: var(--muted); max-width: 480px; margin: 0; }
 
-  /* Problem */
-  .problem { border-bottom: 1px solid var(--hairline); padding-top: 32px; padding-bottom: 32px; }
-  .problem p { font-size: 17px; color: var(--muted); max-width: 520px; margin: 0; }
+  /* The Bracket — judge moment */
+  .bracket-row { display: flex; align-items: flex-end; gap: 36px; flex-wrap: wrap; }
+  .bracket-item { display: flex; align-items: stretch; gap: 6px; }
+  .bracket-glyph {
+    font-family: var(--font-display); font-size: 44px; line-height: 1; color: var(--ink);
+    align-self: stretch; display: flex; align-items: center;
+  }
+  .bracket-item.plain { padding: 0 2px; }
+  .bracket-body { display: flex; flex-direction: column; gap: 4px; padding: 2px 0; }
+  .bracket-id {
+    font-family: var(--font-mono); font-weight: 700; font-size: 16px; color: var(--ink);
+  }
+  .bracket-item.rejected .bracket-id { text-decoration: line-through; text-decoration-color: var(--closed); text-decoration-thickness: 1.5px; }
+  .bracket-state {
+    font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase;
+  }
+  .bracket-item.selected .bracket-state { color: var(--open); }
+  .bracket-item.rejected .bracket-state { color: var(--closed); }
 
-  /* Gate — the one dark module */
-  .gate-section { padding: 40px 0; }
-  .gate-panel {
-    background: var(--panel); color: var(--panel-text); border-radius: 6px;
-    padding: 32px 28px;
+  /* Compact ledger */
+  .ledger-row {
+    display: grid; grid-template-columns: 34px 1fr auto; gap: 14px; align-items: baseline;
+    padding: 11px 0; border-bottom: 1px solid var(--hairline); font-size: 14px;
   }
-  .gate-panel .gate-label {
-    font-family: var(--font-mono); font-size: 11px; text-transform: uppercase;
-    letter-spacing: 0.1em; color: var(--panel-muted); margin: 0 0 22px;
-  }
-  .gate { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; }
-  .lane { padding: 8px 16px; border-left: 1px solid rgba(255,255,255,0.1); }
-  .lane:first-child { border-left: none; padding-left: 0; }
-  .lane-state {
-    font-family: var(--font-mono); font-size: 12px; font-weight: 600; letter-spacing: 0.05em;
-    margin-bottom: 10px;
-  }
-  .lane.open .lane-state { color: var(--open); }
-  .lane.closed .lane-state { color: var(--closed); }
-  .lane h3 { font-size: 14px; margin: 0 0 8px; font-weight: 600; color: var(--panel-text); }
-  .lane .meta { font-size: 12.5px; color: var(--panel-muted); margin-bottom: 3px; }
-  .lane .status-line { font-family: var(--font-mono); font-size: 11.5px; margin-top: 10px; }
-  .lane.open .status-line { color: var(--open); }
-  .lane.closed .status-line { color: var(--closed); }
-  .lane .reason { font-size: 11.5px; color: var(--panel-muted); margin-top: 3px; }
-  .gate-panel .tx-line {
-    margin-top: 22px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.1);
-    font-family: var(--font-mono); font-size: 12px; color: var(--panel-text); word-break: break-all;
-  }
-  .gate-panel .tx-line a { color: var(--open); text-decoration: none; border-bottom: 1px solid var(--open); }
+  .ledger-row:last-child { border-bottom: none; }
+  .ledger-row .id { font-family: var(--font-mono); font-weight: 700; }
+  .ledger-row.selected .id { color: var(--open); }
+  .ledger-row.rejected .id { color: var(--closed); }
+  .ledger-row .detail { color: var(--muted); font-size: 13px; }
+  .ledger-row .state { font-family: var(--font-mono); font-size: 11.5px; text-align: right; white-space: nowrap; }
+  .ledger-row.selected .state { color: var(--open); }
+  .ledger-row.rejected .state { color: var(--closed); }
 
   /* Proof snapshot */
-  .snapshot { border-top: 1px solid var(--hairline); padding-top: 28px; }
   .snap-row {
     display: flex; flex-wrap: wrap; gap: 8px 20px; font-family: var(--font-mono); font-size: 12.5px;
   }
   .snap-row span { color: var(--muted); }
   .snap-row b { color: var(--ink); font-weight: 600; }
+  .snap-note { margin: 14px 0 0; font-size: 13px; color: var(--muted); }
+  .snap-note a { color: var(--ink); }
+
+  /* 3-step flow */
+  .flow { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  .flow-step .flow-num {
+    font-family: var(--font-mono); font-size: 11px; color: var(--muted); margin-bottom: 8px;
+  }
+  .flow-step h3 { margin: 0 0 6px; font-size: 15px; }
+  .flow-step p { margin: 0; font-size: 13.5px; color: var(--muted); }
+
+  /* Honest limits */
+  .limits-list { list-style: none; margin: 0; padding: 0; }
+  .limits-list li {
+    padding: 10px 0; border-bottom: 1px solid var(--hairline); font-size: 14.5px; color: var(--ink);
+  }
+  .limits-list li:last-child { border-bottom: none; }
+  .limits-list li::before { content: "— "; color: var(--limit); }
 
   /* Links */
   .links {
-    display: flex; gap: 24px; flex-wrap: wrap; padding: 32px 0 64px;
-    border-top: 1px solid var(--hairline);
+    display: flex; gap: 24px; flex-wrap: wrap; padding: 32px 0 64px; border-bottom: none;
   }
   .link-btn {
     font-family: var(--font-mono); font-size: 13px; color: var(--ink); text-decoration: none;
-    border-bottom: 1px solid var(--ink); padding-bottom: 2px;
+    border-bottom: 1px solid var(--ink); padding-bottom: 2px; background: none; cursor: default;
   }
+  a.link-btn { cursor: pointer; }
   .link-btn.primary { color: var(--open); border-color: var(--open); }
 
   @media (max-width: 640px) {
-    .gate { grid-template-columns: 1fr; row-gap: 20px; }
-    .lane { border-left: none; padding-left: 0; }
+    .bracket-row { flex-direction: column; align-items: flex-start; gap: 20px; }
+    .ledger-row { grid-template-columns: 1fr; gap: 3px; }
+    .ledger-row .state { text-align: left; margin-top: 2px; }
+    .flow { grid-template-columns: 1fr; gap: 20px; }
   }
 </style>
 </head>
@@ -107,38 +122,67 @@
   <header class="hero">
     <div class="eyebrow">CITEPAY AGENT</div>
     <h1>No pay, no cite.</h1>
-    <p class="subline">CitePay pays the one source it cites — and proves it on Arc.</p>
+    <p class="subline">CitePay Agent pays only the source it cites — and proves it on Arc Testnet.</p>
   </header>
 
-  <section class="problem">
-    <p>AI agents cite sources for free. CitePay makes citation cost something.</p>
+  <section class="bracket-section">
+    <div class="eyebrow">The Bracket — judge moment</div>
+    <div class="bracket-row" id="bracket-row"></div>
   </section>
 
-  <section class="gate-section">
-    <div class="gate-panel">
-      <div class="gate-label">The Gate — judge moment</div>
-      <div class="gate" id="gate-lanes"></div>
-      <div class="tx-line" id="tx-line"></div>
-    </div>
+  <section class="ledger-section">
+    <div class="eyebrow">Evidence ledger</div>
+    <div id="ledger-rows"></div>
   </section>
 
   <section class="snapshot">
     <div class="eyebrow">Proof snapshot</div>
     <div class="snap-row">
       <span>payment_mode</span><b>LIVE_GATEWAY</b>
-      <span>network</span><b>Arc Testnet</b>
       <span>gateway</span><b>Circle Gateway x402</b>
+      <span>network</span><b>Arc Testnet · eip155:5042002</b>
       <span>amount</span><b>0.001 USDC</b>
       <span>verify</span><b>true</b>
       <span>settle</span><b>true</b>
       <span>unlock</span><b>HTTP 200</b>
     </div>
+    <p class="snap-note" id="proof-note"></p>
+  </section>
+
+  <section class="flow-section">
+    <div class="eyebrow">Evaluate → Pay → Cite</div>
+    <div class="flow">
+      <div class="flow-step">
+        <div class="flow-num">01</div>
+        <h3>Evaluate</h3>
+        <p>Score every candidate source by relevance and price. Reject anything over budget or low-value.</p>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">02</div>
+        <h3>Pay</h3>
+        <p>Pay only the selected source via Circle Gateway (x402) on Arc Testnet, in USDC.</p>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">03</div>
+        <h3>Cite</h3>
+        <p>Cite only the source that was paid. No exceptions.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="limits-section">
+    <div class="eyebrow">Honest limits</div>
+    <ul class="limits-list">
+      <li>Testnet only</li>
+      <li>No external publishers onboarded yet</li>
+      <li>Public page is a judge-facing proof landing, not a self-serve production product</li>
+    </ul>
   </section>
 
   <footer class="links">
     <a class="link-btn primary" href="proof.html">View full proof →</a>
     <a class="link-btn" href="https://github.com/Faadil1/citepay-agent-lepton">View repo</a>
-    <a class="link-btn" href="#">Watch demo</a>
+    <span class="link-btn">Demo video provided in submission</span>
   </footer>
 
 </div>
@@ -156,7 +200,7 @@
 
 <script id="receipt-data" type="application/json">
 {
-  "tx_ref": "f1983b38-e27e-4126-8ed1-69e76927d25d"
+  "tx_ref": "1310f944-6996-4c6a-a32f-c7c27efc4966"
 }
 </script>
 
@@ -167,138 +211,44 @@ function render() {
   const reasonLabel = r => r === 'over_budget' ? 'OVER BUDGET' : 'LOWER RELEVANCE/PRICE';
   const shortTx = receipt.tx_ref.slice(0, 8) + '…';
 
-  const ordered = [...v3.candidates].sort((a, b) => (a.id === v3.selected_source_id ? -1 : b.id === v3.selected_source_id ? 1 : 0));
-  document.getElementById('gate-lanes').innerHTML = ordered.map(c => {
+  const ordered = [...v3.candidates].sort((a, b) =>
+    (a.id === v3.selected_source_id ? -1 : b.id === v3.selected_source_id ? 1 : 0));
+
+  // The Bracket — one glyph pair around the selected source only, plain ids either side
+  document.getElementById('bracket-row').innerHTML = ordered.map(c => {
     const isOpen = c.id === v3.selected_source_id;
-    return `<div class="lane ${isOpen ? 'open' : 'closed'}">
-      <div class="lane-state">${isOpen ? 'OPEN' : 'CLOSED'}</div>
-      <h3>${c.id} — ${c.title}</h3>
-      <div class="meta">${c.price} USDC${c.ratio ? ` · ratio ${c.ratio}` : ''}</div>
-      ${isOpen
-        ? `<div class="status-line">PAID → CITED</div>`
-        : `<div class="status-line">NOT PAID → NOT CITED</div><div class="reason">${reasonLabel(c.reason)}</div>`}
+    if (isOpen) {
+      return `<div class="bracket-item selected">
+        <div class="bracket-glyph">[</div>
+        <div class="bracket-body">
+          <div class="bracket-id">${c.id}</div>
+          <div class="bracket-state">SELECTED · PAID · CITED</div>
+        </div>
+        <div class="bracket-glyph">]</div>
+      </div>`;
+    }
+    return `<div class="bracket-item rejected plain">
+      <div class="bracket-body">
+        <div class="bracket-id">${c.id}</div>
+        <div class="bracket-state">REJECTED — ${reasonLabel(c.reason)}</div>
+      </div>
     </div>`;
   }).join('');
 
-  document.getElementById('tx-line').innerHTML = `tx/ref: ${shortTx} — <a href="proof.html">full proof →</a>`;
+  // Compact ledger — same source order, real numbers, no numbers struck through
+  document.getElementById('ledger-rows').innerHTML = ordered.map(c => {
+    const isOpen = c.id === v3.selected_source_id;
+    return `<div class="ledger-row ${isOpen ? 'selected' : 'rejected'}">
+      <div class="id">${c.id}</div>
+      <div class="detail">${c.price} USDC${c.ratio ? ` · ratio ${c.ratio}` : ''}${!isOpen ? ` · ${reasonLabel(c.reason)}` : ''}</div>
+      <div class="state">${isOpen ? 'LIVE_GATEWAY' : 'NOT PAID'}</div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('proof-note').innerHTML =
+    `tx/ref: ${shortTx} · buyer-side evidence + seller-side receipt in <a href="proof.html">full proof →</a>`;
 }
 render();
 </script>
-<!-- PLAN-C-VIEWER:START -->
-<section id="plan-c-proof" style="margin:24px auto;max-width:1040px;padding:0 16px;font-family:ui-monospace,Menlo,monospace;color:#e6e8eb;">
-  <div style="background:#0f1115;border:1px solid #262b33;border-radius:14px;padding:22px;margin-bottom:18px;">
-    <h1 style="margin:0 0 8px;font-size:28px;line-height:1.15;">CitePay Agent — No pay, no cite.</h1>
-    <p style="margin:0 0 10px;font-size:15px;color:#cfd3da;">Most agents automate payments. CitePay decides if payment is deserved — and can't cite without paying.</p>
-    <p style="margin:0;color:#5eead4;font-weight:700;">The sophistication is knowing when not to pay.</p>
-  </div>
-
-  <div style="display:flex;flex-wrap:wrap;gap:8px;margin:16px 0 28px;">
-    <span style="background:#1f3d33;color:#5eead4;border:1px solid #2e5c4d;padding:5px 12px;border-radius:999px;font-size:12px;font-weight:600;">LIVE — verified Arc Testnet Gateway evidence</span>
-    <span style="background:#14171c;color:#e6e8eb;border:1px solid #262b33;padding:5px 12px;border-radius:999px;font-size:12px;">Circle Gateway x402</span>
-    <span style="background:#14171c;color:#e6e8eb;border:1px solid #262b33;padding:5px 12px;border-radius:999px;font-size:12px;">buyer + seller receipts</span>
-    <span style="background:#14171c;color:#e6e8eb;border:1px solid #262b33;padding:5px 12px;border-radius:999px;font-size:12px;">agent rejects before spending</span>
-  </div>
-
-  <div style="margin:0 0 28px;">
-    <div style="font-size:12px;color:#8a929e;text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;">Gateway lifecycle — real values from V3 trace tx/ref 1310f944-6996-4c6a-a32f-c7c27efc4966</div>
-    <div style="display:flex;flex-wrap:wrap;gap:0;align-items:stretch;">
-      <div style="background:#14171c;border:1px solid #262b33;padding:10px 14px;font-size:12px;">402 required</div>
-      <div style="align-self:center;color:#5eead4;padding:0 6px;">→</div>
-      <div style="background:#14171c;border:1px solid #262b33;padding:10px 14px;font-size:12px;">x402 payment header</div>
-      <div style="align-self:center;color:#5eead4;padding:0 6px;">→</div>
-      <div style="background:#14171c;border:1px solid #262b33;padding:10px 14px;font-size:12px;">verify=<span style="color:#5eead4;">true</span></div>
-      <div style="align-self:center;color:#5eead4;padding:0 6px;">→</div>
-      <div style="background:#14171c;border:1px solid #262b33;padding:10px 14px;font-size:12px;">settle=<span style="color:#5eead4;">true</span></div>
-      <div style="align-self:center;color:#5eead4;padding:0 6px;">→</div>
-      <div style="background:#14171c;border:1px solid #262b33;padding:10px 14px;font-size:12px;">HTTP <span style="color:#5eead4;">200</span> unlock</div>
-      <div style="align-self:center;color:#5eead4;padding:0 6px;">→</div>
-      <div style="background:#1f3d33;border:1px solid #2e5c4d;padding:10px 14px;font-size:12px;color:#5eead4;font-weight:600;">citation allowed</div>
-    </div>
-  </div>
-
-  <div style="background:#14171c;border:1px solid #262b33;border-radius:8px;padding:18px;margin:0 0 28px;font-size:13px;">
-    <div style="font-size:12px;color:#8a929e;text-transform:uppercase;letter-spacing:.05em;margin-bottom:12px;">Decision trace — visible logic, not hidden reasoning</div>
-    <div style="margin-bottom:8px;"><span style="color:#8a929e;">query:</span> "How can AI agents compensate creators for cited evidence?"</div>
-    <div style="margin-bottom:14px;"><span style="color:#8a929e;">query tokens:</span> ai, agents, compensate, creators, cited, evidence</div>
-    <table style="width:100%;border-collapse:collapse;font-size:12px;">
-      <tr style="color:#8a929e;text-align:left;">
-        <th style="padding:6px 8px;border-bottom:1px solid #262b33;">source</th>
-        <th style="padding:6px 8px;border-bottom:1px solid #262b33;">matched terms</th>
-        <th style="padding:6px 8px;border-bottom:1px solid #262b33;">score</th>
-        <th style="padding:6px 8px;border-bottom:1px solid #262b33;">price</th>
-        <th style="padding:6px 8px;border-bottom:1px solid #262b33;">score/price</th>
-        <th style="padding:6px 8px;border-bottom:1px solid #262b33;">verdict</th>
-      </tr>
-      
-    <tr style="background:#1f3d33;">
-      <td style="padding:6px 8px;">S1</td>
-      <td style="padding:6px 8px;">ai, agents, creators, cited, evidence</td>
-      <td style="padding:6px 8px;">0.357</td>
-      <td style="padding:6px 8px;">0.001 USDC</td>
-      <td style="padding:6px 8px;">357.143</td>
-      <td style="padding:6px 8px;color:#5eead4;font-weight:600;">SELECTED → paid</td>
-    </tr>
-    <tr style="">
-      <td style="padding:6px 8px;">S2</td>
-      <td style="padding:6px 8px;">—</td>
-      <td style="padding:6px 8px;">0</td>
-      <td style="padding:6px 8px;">0.02 USDC</td>
-      <td style="padding:6px 8px;">0</td>
-      <td style="padding:6px 8px;color:#e08a8a;font-weight:600;">REJECTED — over_budget</td>
-    </tr>
-    <tr style="">
-      <td style="padding:6px 8px;">S3</td>
-      <td style="padding:6px 8px;">—</td>
-      <td style="padding:6px 8px;">0</td>
-      <td style="padding:6px 8px;">0.001 USDC</td>
-      <td style="padding:6px 8px;">0</td>
-      <td style="padding:6px 8px;color:#e08a8a;font-weight:600;">REJECTED — lower_relevance_price_ratio</td>
-    </tr>
-    </table>
-  </div>
-
-  <div style="background:#14171c;border:1px solid #262b33;border-radius:8px;padding:18px;margin:0 0 28px;font-size:13px;">
-    <div style="font-size:12px;color:#8a929e;text-transform:uppercase;letter-spacing:.05em;margin-bottom:12px;">Budget policy</div>
-    <ul style="margin:0;padding-left:18px;line-height:1.9;">
-      <li>Fixed research budget: <strong>0.005 USDC</strong> per query</li>
-      <li>The agent cannot exceed the budget</li>
-      <li>The agent does not pay every source</li>
-      <li>Weak or overpriced options are rejected, with logged reasons</li>
-      <li>No citation without a successful payment: verify + settle + unlock</li>
-    </ul>
-  </div>
-
-  <div style="margin:0 0 28px;">
-    <div style="font-size:12px;color:#8a929e;text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;">Settlement confirmed on both sides</div>
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;">
-      <div style="background:#14171c;border:1px solid #262b33;border-radius:8px;padding:16px;font-size:12px;">
-        <div style="color:#5eead4;font-weight:600;margin-bottom:10px;">BUYER / TRACE RECEIPT <span style="color:#8a929e;font-weight:400;">· LIVE_GATEWAY</span></div>
-        <div>tx/ref: <span style="color:#5eead4;word-break:break-all;">1310f944-6996-4c6a-a32f-c7c27efc4966</span></div>
-        <div>amount: 0.001 USDC</div>
-        <div>network: eip155:5042002</div>
-        <div>verify=true · settle=true · HTTP 200</div>
-      </div>
-      <div style="background:#14171c;border:1px solid #262b33;border-radius:8px;padding:16px;font-size:12px;">
-        <div style="color:#5eead4;font-weight:600;margin-bottom:10px;">SELLER RECEIPT <span style="color:#8a929e;font-weight:400;">· LOCAL_VERIFIED</span></div>
-        <div>tx/ref: <span style="color:#5eead4;word-break:break-all;">f1983b38-e27e-4126-8ed1-69e76927d25d</span></div>
-        <div>payTo: <span style="word-break:break-all;">0x9252470F6237E16d087E0e39B121B3e770Ea1972</span></div>
-        <div>amount: 0.001 USDC</div>
-        <div>settle_success: true</div>
-        <div style="color:#8a929e;margin-top:8px;">Captured from the seller's own settlement log — no balance-delta claim.</div>
-      </div>
-    </div>
-  </div>
-
-  <div style="background:#14171c;border:1px solid #262b33;border-radius:8px;padding:18px;margin:0 0 28px;font-size:13px;">
-    <div style="font-size:12px;color:#8a929e;text-transform:uppercase;letter-spacing:.05em;margin-bottom:12px;">Honest limits</div>
-    <ul style="margin:0;padding-left:18px;line-height:1.9;">
-      <li>Testnet only</li>
-      <li>No external publishers onboarded yet</li>
-      <li>Public page is a judge-facing proof viewer, not a self-serve production product</li>
-      <li>No mainnet or production reliability claim</li>
-    </ul>
-  </div>
-</section>
-<!-- PLAN-C-VIEWER:END -->
 </body>
 </html>
