@@ -184,5 +184,121 @@ function render() {
 }
 render();
 </script>
+<!-- PLAN-C-VIEWER:START -->
+<section id="plan-c-proof" style="margin:24px auto;max-width:1040px;padding:0 16px;font-family:ui-monospace,Menlo,monospace;color:#e6e8eb;">
+  <div style="background:#0f1115;border:1px solid #262b33;border-radius:14px;padding:22px;margin-bottom:18px;">
+    <h1 style="margin:0 0 8px;font-size:28px;line-height:1.15;">CitePay Agent — No pay, no cite.</h1>
+    <p style="margin:0 0 10px;font-size:15px;color:#cfd3da;">Most agents automate payments. CitePay decides if payment is deserved — and can't cite without paying.</p>
+    <p style="margin:0;color:#5eead4;font-weight:700;">The sophistication is knowing when not to pay.</p>
+  </div>
+
+  <div style="display:flex;flex-wrap:wrap;gap:8px;margin:16px 0 28px;">
+    <span style="background:#1f3d33;color:#5eead4;border:1px solid #2e5c4d;padding:5px 12px;border-radius:999px;font-size:12px;font-weight:600;">LIVE — verified Arc Testnet Gateway evidence</span>
+    <span style="background:#14171c;color:#e6e8eb;border:1px solid #262b33;padding:5px 12px;border-radius:999px;font-size:12px;">Circle Gateway x402</span>
+    <span style="background:#14171c;color:#e6e8eb;border:1px solid #262b33;padding:5px 12px;border-radius:999px;font-size:12px;">buyer + seller receipts</span>
+    <span style="background:#14171c;color:#e6e8eb;border:1px solid #262b33;padding:5px 12px;border-radius:999px;font-size:12px;">agent rejects before spending</span>
+  </div>
+
+  <div style="margin:0 0 28px;">
+    <div style="font-size:12px;color:#8a929e;text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;">Gateway lifecycle — real values from V3 trace tx/ref 1310f944-6996-4c6a-a32f-c7c27efc4966</div>
+    <div style="display:flex;flex-wrap:wrap;gap:0;align-items:stretch;">
+      <div style="background:#14171c;border:1px solid #262b33;padding:10px 14px;font-size:12px;">402 required</div>
+      <div style="align-self:center;color:#5eead4;padding:0 6px;">→</div>
+      <div style="background:#14171c;border:1px solid #262b33;padding:10px 14px;font-size:12px;">x402 payment header</div>
+      <div style="align-self:center;color:#5eead4;padding:0 6px;">→</div>
+      <div style="background:#14171c;border:1px solid #262b33;padding:10px 14px;font-size:12px;">verify=<span style="color:#5eead4;">true</span></div>
+      <div style="align-self:center;color:#5eead4;padding:0 6px;">→</div>
+      <div style="background:#14171c;border:1px solid #262b33;padding:10px 14px;font-size:12px;">settle=<span style="color:#5eead4;">true</span></div>
+      <div style="align-self:center;color:#5eead4;padding:0 6px;">→</div>
+      <div style="background:#14171c;border:1px solid #262b33;padding:10px 14px;font-size:12px;">HTTP <span style="color:#5eead4;">200</span> unlock</div>
+      <div style="align-self:center;color:#5eead4;padding:0 6px;">→</div>
+      <div style="background:#1f3d33;border:1px solid #2e5c4d;padding:10px 14px;font-size:12px;color:#5eead4;font-weight:600;">citation allowed</div>
+    </div>
+  </div>
+
+  <div style="background:#14171c;border:1px solid #262b33;border-radius:8px;padding:18px;margin:0 0 28px;font-size:13px;">
+    <div style="font-size:12px;color:#8a929e;text-transform:uppercase;letter-spacing:.05em;margin-bottom:12px;">Decision trace — visible logic, not hidden reasoning</div>
+    <div style="margin-bottom:8px;"><span style="color:#8a929e;">query:</span> "How can AI agents compensate creators for cited evidence?"</div>
+    <div style="margin-bottom:14px;"><span style="color:#8a929e;">query tokens:</span> ai, agents, compensate, creators, cited, evidence</div>
+    <table style="width:100%;border-collapse:collapse;font-size:12px;">
+      <tr style="color:#8a929e;text-align:left;">
+        <th style="padding:6px 8px;border-bottom:1px solid #262b33;">source</th>
+        <th style="padding:6px 8px;border-bottom:1px solid #262b33;">matched terms</th>
+        <th style="padding:6px 8px;border-bottom:1px solid #262b33;">score</th>
+        <th style="padding:6px 8px;border-bottom:1px solid #262b33;">price</th>
+        <th style="padding:6px 8px;border-bottom:1px solid #262b33;">score/price</th>
+        <th style="padding:6px 8px;border-bottom:1px solid #262b33;">verdict</th>
+      </tr>
+      
+    <tr style="background:#1f3d33;">
+      <td style="padding:6px 8px;">S1</td>
+      <td style="padding:6px 8px;">ai, agents, creators, cited, evidence</td>
+      <td style="padding:6px 8px;">0.357</td>
+      <td style="padding:6px 8px;">0.001 USDC</td>
+      <td style="padding:6px 8px;">357.143</td>
+      <td style="padding:6px 8px;color:#5eead4;font-weight:600;">SELECTED → paid</td>
+    </tr>
+    <tr style="">
+      <td style="padding:6px 8px;">S2</td>
+      <td style="padding:6px 8px;">—</td>
+      <td style="padding:6px 8px;">0</td>
+      <td style="padding:6px 8px;">0.02 USDC</td>
+      <td style="padding:6px 8px;">0</td>
+      <td style="padding:6px 8px;color:#e08a8a;font-weight:600;">REJECTED — over_budget</td>
+    </tr>
+    <tr style="">
+      <td style="padding:6px 8px;">S3</td>
+      <td style="padding:6px 8px;">—</td>
+      <td style="padding:6px 8px;">0</td>
+      <td style="padding:6px 8px;">0.001 USDC</td>
+      <td style="padding:6px 8px;">0</td>
+      <td style="padding:6px 8px;color:#e08a8a;font-weight:600;">REJECTED — lower_relevance_price_ratio</td>
+    </tr>
+    </table>
+  </div>
+
+  <div style="background:#14171c;border:1px solid #262b33;border-radius:8px;padding:18px;margin:0 0 28px;font-size:13px;">
+    <div style="font-size:12px;color:#8a929e;text-transform:uppercase;letter-spacing:.05em;margin-bottom:12px;">Budget policy</div>
+    <ul style="margin:0;padding-left:18px;line-height:1.9;">
+      <li>Fixed research budget: <strong>0.005 USDC</strong> per query</li>
+      <li>The agent cannot exceed the budget</li>
+      <li>The agent does not pay every source</li>
+      <li>Weak or overpriced options are rejected, with logged reasons</li>
+      <li>No citation without a successful payment: verify + settle + unlock</li>
+    </ul>
+  </div>
+
+  <div style="margin:0 0 28px;">
+    <div style="font-size:12px;color:#8a929e;text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;">Settlement confirmed on both sides</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;">
+      <div style="background:#14171c;border:1px solid #262b33;border-radius:8px;padding:16px;font-size:12px;">
+        <div style="color:#5eead4;font-weight:600;margin-bottom:10px;">BUYER / TRACE RECEIPT <span style="color:#8a929e;font-weight:400;">· LIVE_GATEWAY</span></div>
+        <div>tx/ref: <span style="color:#5eead4;word-break:break-all;">1310f944-6996-4c6a-a32f-c7c27efc4966</span></div>
+        <div>amount: 0.001 USDC</div>
+        <div>network: eip155:5042002</div>
+        <div>verify=true · settle=true · HTTP 200</div>
+      </div>
+      <div style="background:#14171c;border:1px solid #262b33;border-radius:8px;padding:16px;font-size:12px;">
+        <div style="color:#5eead4;font-weight:600;margin-bottom:10px;">SELLER RECEIPT <span style="color:#8a929e;font-weight:400;">· LOCAL_VERIFIED</span></div>
+        <div>tx/ref: <span style="color:#5eead4;word-break:break-all;">f1983b38-e27e-4126-8ed1-69e76927d25d</span></div>
+        <div>payTo: <span style="word-break:break-all;">0x9252470F6237E16d087E0e39B121B3e770Ea1972</span></div>
+        <div>amount: 0.001 USDC</div>
+        <div>settle_success: true</div>
+        <div style="color:#8a929e;margin-top:8px;">Captured from the seller's own settlement log — no balance-delta claim.</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="background:#14171c;border:1px solid #262b33;border-radius:8px;padding:18px;margin:0 0 28px;font-size:13px;">
+    <div style="font-size:12px;color:#8a929e;text-transform:uppercase;letter-spacing:.05em;margin-bottom:12px;">Honest limits</div>
+    <ul style="margin:0;padding-left:18px;line-height:1.9;">
+      <li>Testnet only</li>
+      <li>No external publishers onboarded yet</li>
+      <li>Public page is a judge-facing proof viewer, not a self-serve production product</li>
+      <li>No mainnet or production reliability claim</li>
+    </ul>
+  </div>
+</section>
+<!-- PLAN-C-VIEWER:END -->
 </body>
 </html>

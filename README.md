@@ -1,3 +1,31 @@
+<!-- PLAN-C-PACKAGING:START -->
+# CitePay Agent — No pay, no cite.
+
+Most agents automate payments. CitePay decides if payment is deserved — and can't cite without paying.
+
+**The sophistication is knowing when not to pay.**
+
+`Circle Gateway x402 · Gateway testnet API · Arc Testnet eip155:5042002 · verify=true · settle=true · HTTP 200 unlock`
+
+
+## Rejection rubric
+
+A candidate source is rejected when any of the following holds:
+
+- **over_budget** — price exceeds the fixed research budget (0.005 USDC)
+- **lower_relevance_price_ratio** — another eligible source offers more relevance per USDC
+- **insufficient match** — too little term overlap with the query to justify any payment
+- **no citation without successful payment** — even a selected source is never cited unless verify=true, settle=true, and HTTP 200 unlock all succeed
+
+## Onboard a publisher in 5 minutes
+
+A publisher needs exactly one thing: an x402-protected endpoint compatible with the seller pattern in `seller-v2.mjs` — price and `payTo` in the 402 requirements.
+
+From there, CitePay can evaluate the source, pay through Circle Gateway x402 on Arc Testnet, unlock the content, and cite it only after payment settles.
+
+No external publishers are onboarded yet. `seller-v2.mjs` is the reference implementation a real publisher would copy.
+<!-- PLAN-C-PACKAGING:END -->
+
 # CitePay Agent
 
 AI research agent that decides which sources are worth paying for, unlocks x402-protected content via Circle Gateway on Arc Testnet, and pays creators in test USDC only when their work is cited.
